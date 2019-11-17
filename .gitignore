@@ -12,3 +12,5 @@
 *.out
 *.synctex.gz
 *.synctex*
+
+config.yml
