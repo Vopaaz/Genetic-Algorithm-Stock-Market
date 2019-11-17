@@ -20,6 +20,9 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 
+\usepackage[ruled, linesnumbered]{algorithm2e}
+\usepackage{float}
+
 \defaultfontfeatures{%
 	RawFeature={%
 		+swsh,
@@ -67,26 +70,30 @@ the need for algorithmically select good financial indexes have become more impo
 
 To be more specific, the problem setting can be summarized as follows:
 \begin{itemize}
-\item Given a historical stock price time series in the past $n$ periods, $P_t=\left[p_{t-n}, p_{t-n+1}, \cdots, p_{t-1}\right]$,
-		where $t$ represents the present,
-\item and a set of $k$ trading rules suggesting ``buy", ``sell" or ``hold" action based on the time series\\
-		$R=\{r_1, r_2, \cdots, r_k\}, \forall r_i(P_t) \rightarrow s_i \in \{\text{sell}, \text{buy}, \text{hold}\}$,
-\item design an agent $A$ who can integrate all the rules to make a final decision\\
-		$A(R(P_t)) \rightarrow d_t \in \{\text{sell}, \text{buy}, \text{hold}\}$,
-\item that can maximize the profit in the following $m$ period,
-		which can be calculated as $\sum \limits_{t=0}^{m} p_{t}^{\text{sell}} - p_{t}^{\text{buy}}$,\\
-		$p_{t}^{\text{sell}} = \left\{
-		\begin{array}{ll}
-			p_t \quad &\text{if} A(R(P_t)) = \text{sell} \\
-			0 \quad &\text{otherwise}
-		\end{array}\right.,
-		p_t^{\text{buy}} = \left\{
-		\begin{array}{ll}
-			p_t \quad &\text{if} A(R(P_t)) = \text{buy} \\
-			0 \quad &\text{otherwise}
-		\end{array}
-		\right.$
+	\item Given a historical stock price time series in the past $n$ periods, $P_t=\left[p_{t-n}, p_{t-n+1}, \cdots, p_{t-1}\right]$,
+	      where $t$ represents the present,
+	\item and a set of $k$ trading rules suggesting ``buy", ``sell" or ``hold" action based on the time series\\
+	      $R=\{r_1, r_2, \cdots, r_k\}, \forall r_i(P_t) \rightarrow s_i \in \{\text{sell}, \text{buy}, \text{hold}\}$,
+	\item design an agent $A$ who can integrate all the rules to make a final decision\\
+	      $A(R(P_t)) \rightarrow d_t \in \{\text{sell}, \text{buy}, \text{hold}\}$,
+	\item that can maximize the profit in the following $m$ period,
+	      which can be calculated as $\sum \limits_{t=0}^{m} p_{t}^{\text{sell}} - p_{t}^{\text{buy}}$,\\
+	      $p_{t}^{\text{sell}} = \left\{
+		      \begin{array}{ll}
+			      p_t \quad & \text{if} A(R(P_t)) = \text{sell} \wedge A \text{ currently holds the stock} \\
+			      0 \quad   & \text{otherwise}
+		      \end{array}\right.,\\
+		      p_t^{\text{buy}} = \left\{
+		      \begin{array}{ll}
+			      p_t \quad & \text{if} A(R(P_t)) = \text{buy} \wedge A \text{ currently not holds the stock} \\
+			      0 \quad   & \text{otherwise}
+		      \end{array}
+		      \right.$
 \end{itemize}
+
+We are not considering the service charge
+because it could make it difficult to design an evaluation benchmark that can be
+calculated without conducting another complete search.
 
 \section{Approach}
 
@@ -115,10 +122,66 @@ but also have some generalization ability and therefore have the potential to be
 
 \subsection{Algorithm}
 
+We will use Python to implement the genetic algorithm and whatever strategies to be tested.
+We have found a Python package, \href{https://github.com/PytLab/gaft}{gaft}, that serve as a framework for running genetic algorithm.
+
+What needs to be built from scratch includes all the empirical trading rules,
+and possibly some variant strategies of the genetic algorithm that are not included in gaft.
+
+\section{Analysis Plan}
+
+The benchmark of our evaluation is an agent who can ``predict the future".
+It knows the whole time series and make decision based on it,
+$A'(P_m) \rightarrow d'_t$.
+It can be implemented with the following trivial algorithm.
+\begin{algorithm}[H]
+	\KwData{prices}
+	\KwData{today}
+	\SetKwData{prices}{prices}
+	\SetKwData{today}{today}
+	\KwResult{decision}
+
+	\uIf{$\prices[\today+1] > \prices[\today]$}{
+		\Return{buy}\;
+	}\uElseIf{$\prices[\today+1] < \prices[\today]$}{
+		\Return{sell}\;
+	}\Else{
+		\Return{hold}\;
+	}
+	\caption{Benchmark Agent}
+\end{algorithm}
+
+The evaluation function used in the genetic algorithm will be
+$\dfrac{
+		\operatorname{Profit}(\text{genetic agent})
+	}{
+		\operatorname{Profit}(\text{benchmark agent})
+	}$ and the goal is to maximize it.
+
+We may also choose some trading rules and build agents who make decisions based solely
+on each one of them to see how much improvement is brought by the genetic algorithm.
+
+The runtime and memory usage will also be measured,
+but generally they can be controlled by setting the maximum round of iteration and population.
+Therefore we will not emphasis too much on it.
+
+% TODO: We have found several variants for genetic algorithms and we will implement them.
+% Citation!
+
+The experiment will be conducted in two stages.
+In the first stage, the test dataset will not be used.
+We will only try to find the hyper parameters that leads to the best performance on the train dataset.
+In the second stage, we will run the genetic algorithm on the train dataset as before,
+but the trained agent will be applied on the test dataset to measure its final performance.
+The idea is borrowed from machine learning, that only optimizing on the train dataset could cause overfitting.
+The test dataset, which is invisible during the training state, can test the agent's generalization ability.
+We will also try to find the best hyper parameters for the second stage and compare it with those in the first stage,
+which hopefully could inspire us about how the choice of hyper parameters and strategies can serve as overfitting prevention.
 
 
+\section{Timeline}
 
-
+% TODO: Timeline.
 
 
 %-------%
