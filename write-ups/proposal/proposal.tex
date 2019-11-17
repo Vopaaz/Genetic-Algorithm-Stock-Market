@@ -1,0 +1,132 @@
+% English Article template created by Vopaaz
+\documentclass{article}
+\usepackage{geometry}
+\geometry{a4paper}
+\usepackage{setspace}
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks,allcolors=black}
+
+\setenumerate[1]{itemsep=0pt,partopsep=2pt,parsep=0pt ,topsep=2pt}
+\setitemize[1]{itemsep=0pt,partopsep=2pt,parsep=0pt ,topsep=2pt}
+\setenumerate[2]{itemsep=0pt,partopsep=2pt,parsep=0pt ,topsep=2pt}
+\setitemize[2]{itemsep=0pt,partopsep=2pt,parsep=0pt ,topsep=2pt}
+\setdescription{itemsep=0pt,partopsep=2pt,parsep=0pt ,topsep=2pt}
+
+\usepackage{graphicx}
+\usepackage{fontspec}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\defaultfontfeatures{%
+	RawFeature={%
+		+swsh,
+		+calt
+	}%
+}
+
+\setmainfont{EB Garamond}
+
+%-----------%
+
+\title{Introduction to Artificial Intelligence Writing 4}
+\author{YiFan Li\\ZeYuan Yang}
+\date{\today}
+
+\begin{document}
+
+\addfontfeatures{RawFeature={+smcp}}
+\maketitle
+\addfontfeatures{RawFeature={-smcp}}
+
+%-------%
+
+\section{Introduction}
+
+On today's financial market, increasing number of financial indexes are being created.
+Take the stock market as an example.
+Up till now, there have been over 200 generic rules
+that can suggest a buying or selling or selling decision
+based on the historical stock price time series \cite{stock-timing-using-genetic-algorithms}.
+Some of the most prevailing ones include moving average, relative strength indicator, stochastic oscillator, etc.
+However, these rules have at least three flaws.
+Firstly, all of these rules seems somewhat arbitrary, and are highly unstable.
+They could perform well on some stocks, but might fail on others.
+Secondly, it's impossible for a human trader to integrate all these 200 rules in his mind
+and make a trading decision.
+Thirdly, most of the indexes have some parameters as output, for example the time window for moving average,
+the choice of what number should be used for these parameters are still empirical.
+
+Both stock market practitioner and academic researchers have devoted huge effort to determine good interpreters
+that can help make profitable decisions in the financial market.
+Additionally, with the rise of quantitative trading,
+which means trading stocks by computer program instead of a human trader,
+the need for algorithmically select good financial indexes have become more important.
+
+To be more specific, the problem setting can be summarized as follows:
+\begin{itemize}
+\item Given a historical stock price time series in the past $n$ periods, $P_t=\left[p_{t-n}, p_{t-n+1}, \cdots, p_{t-1}\right]$,
+		where $t$ represents the present,
+\item and a set of $k$ trading rules suggesting ``buy", ``sell" or ``hold" action based on the time series\\
+		$R=\{r_1, r_2, \cdots, r_k\}, \forall r_i(P_t) \rightarrow s_i \in \{\text{sell}, \text{buy}, \text{hold}\}$,
+\item design an agent $A$ who can integrate all the rules to make a final decision\\
+		$A(R(P_t)) \rightarrow d_t \in \{\text{sell}, \text{buy}, \text{hold}\}$,
+\item that can maximize the profit in the following $m$ period,
+		which can be calculated as $\sum \limits_{t=0}^{m} p_{t}^{\text{sell}} - p_{t}^{\text{buy}}$,\\
+		$p_{t}^{\text{sell}} = \left\{
+		\begin{array}{ll}
+			p_t \quad &\text{if} A(R(P_t)) = \text{sell} \\
+			0 \quad &\text{otherwise}
+		\end{array}\right.,
+		p_t^{\text{buy}} = \left\{
+		\begin{array}{ll}
+			p_t \quad &\text{if} A(R(P_t)) = \text{buy} \\
+			0 \quad &\text{otherwise}
+		\end{array}
+		\right.$
+\end{itemize}
+
+\section{Approach}
+
+We are aiming to solve this problem with genetic algorithm.
+On one hand, the problem setting can be considered as a search problem,
+which tries to find the best combination of trading rules from all possibilities.
+The evaluation function can also be very easily defined.
+On the other hand, there are already some previous studies using the same approach \cite{genetic-algorithms-for-predicting-the-egyptian-stock-market} \cite{genetic-algorithms-to-optimise-the-time-to-make-stock-market-investment}.
+We can based our project on their findings and dig deeper.
+
+\section{Implementation Plan}
+
+For the experiment, we will have to gather data and implement the algorithm.
+
+\subsection{Data}
+
+We can find the historical stock data for free on \href{https://www.alphavantage.co/}{Alpha Vantage}.
+It provides a lot of APIs and we can get the data via HTTP requests.
+The data pipeline, however, will have to be built by ourselves.
+We will use Python to grab data and save it as csv files for further use.
+
+We plan to gather 3 years' data and use the first two years as the train set,
+and the last one year as test set.
+With this architecture, our agent does not only find the optimal strategy for the history,
+but also have some generalization ability and therefore have the potential to be applied on the market in practice.
+
+\subsection{Algorithm}
+
+
+
+
+
+
+
+%-------%
+
+\bibliographystyle{abbrv}
+\bibliography{proposal}
+
+\end{document}
+
+
+

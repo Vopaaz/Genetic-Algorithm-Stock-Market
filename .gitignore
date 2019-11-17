@@ -1,0 +1,14 @@
+# MindManager
+*.mmap*
+
+# gitkeep
+!.gitkeep
+
+# LaTeX
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.synctex.gz
+*.synctex*
