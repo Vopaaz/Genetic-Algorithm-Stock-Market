@@ -130,6 +130,8 @@ and possibly some variant strategies of the genetic algorithm that are not inclu
 
 \section{Analysis Plan}
 
+\subsection{Performance Evaluation}
+
 The benchmark of our evaluation is an agent who can ``predict the future".
 It knows the whole time series and make decision based on it,
 $A'(P_m, t) \rightarrow d'_t$.
@@ -161,36 +163,43 @@ $\dfrac{
 We may also choose some trading rules and build agents who make decisions based solely
 on each one of them to see how much improvement is brought by the genetic algorithm.
 
-The runtime and memory usage will also be measured,
+The runtime and memory usage will probably be measured,
 but generally they can be controlled by setting the maximum round of iteration and population.
 Therefore we will not emphasis too much on it.
 
-
+\subsection{Genetic Algorithms}
 
 During our research, we also found several variants for genetic algorithms which we will implement in our project.
-We will illustrate three different variants here, concerning three different parts of genetic algorithm.
+Three different variants are illustrated here, concerning three different parts of genetic algorithm.
 
-The fist variant adapts the format of the chromosome.
-Instead of traditional bit-string representations of integers in the chromosome, this variant may use other data types, for instance, arrays of real-valued numbers.
-Different chromosomal data types are suitable for different specific problems.
-Therefore, we may implement this variant with numeric chromosomal data type to figure out whether it will have a better performance.
+The first variant adapts the format of the chromosome.
+Instead of traditional bit representations of integers in the chromosome,
+this variant may use other data types, for instance, arrays of real numbers.
+In some previous researches with the similar methodology as us,
+like \cite{genetic-algorithms-for-predicting-the-egyptian-stock-market},
+the bit representation is used, meaning that different trading rules can only have ``selected" or ``not selected",
+and those selected must have the same weight.
+With real number represented chromosome, we can do weighted average for the agent's final choice,
+which could probably improve the result.
 
 Adaptive genetic algorithm is a common variant of genetic algorithm.
 It has already be implemented in different fields and makes a good performance.\cite{an-adaptive-genetic-algorithm-with-dominated-genes} \cite{an-adaptive-genetic-algorithm-for-crystal-structure-prediction}
-There is no fixed possibility of crossover or mutation in adaptive genetic algorithm.
-It will obtain distinct possibilities of crossover and mutation regarding to the population of each generation.
+Instead of having fixed possibility of crossover or mutation,
+adaptive genetic algorithm will obtain distinct possibilities of crossover and mutation
+regarding to the population of each generation.
+% TODO: Any formula?
 The evolution is supposed to be optimized by adaptive genetic algorithm.
 
 Elitism can be applied in the genetic algorithm as well.
 The third variant refines the weeding function.
+% TODO: What is weeding function?
 Not only organisms from the child generation will be kept, the best organism(s) from the parent generation will also be propagated into the next generation.
 Elitism can reduce genetic drift while also increase the selection pressure. \cite{eletism-based-compact-genetic-algorithms}
 
 Besides three mentioned variants, there are also many other variants of genetic algorithm, for example, parallel genetic algorithm. \cite{sizing-populations-for-serial-and-parallel-genetic-algorithms}
 We only plan to include two or three variants in our project.
-The selection will be discussed latter.
 
-
+\subsection{Experiment Phases}
 
 The experiment will be conducted in two stages.
 In the first stage, the test dataset will not be used.
@@ -214,7 +223,7 @@ We plan to finish the project primarily in about three weeks.
 We plan to finish the first part in this week, by Nov 24th.
 As mentioned in the Implementation Plan part, we will grab the data from Alpha Vantage.
 After we get the data, we need to figure out what format of data is usable for our algorithm.
-Then we need to process the data into our target format and construct the train dataset and test dataset. 
+Then we need to process the data into our target format and construct the train dataset and test dataset.
 The entire data preparation is scheduled to be done in five days.
 
 After we have the clean data, we will construct the algorithm model and run the program, in the next week.
