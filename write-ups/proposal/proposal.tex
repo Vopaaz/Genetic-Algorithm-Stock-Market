@@ -187,13 +187,16 @@ It has already be implemented in different fields and makes a good performance.\
 Instead of having fixed possibility of crossover or mutation,
 adaptive genetic algorithm will obtain distinct possibilities of crossover and mutation
 regarding to the population of each generation.
-For instance, Mahmoodabadi designed the quasi sliding surface-mutation as a mutation function of adaptive genetic algorithm.\cite{a-novel-adaptive-genetic-algorithm-for-global-optimization}
-The function is defined as below:
-$$\overrightarrow{X_i}(t+1) = \overrightarrow{X_i}(t) + (\overrightarrow{a} \times 10^{(\frac{-1}{\sqrt{|s|}})})$$
-$$s = 2 \times f(\overrightarrow{X_i}(t)) - f(\overrightarrow{X_i}(t-1))$$
+For instance, Mahmoodabadi\cite{a-novel-adaptive-genetic-algorithm-for-global-optimization}
+designed the quasi sliding surface-mutation, defined as below:
+
+$$\overrightarrow{X_i}(t+1) =
+\overrightarrow{X_i}(t) + (\overrightarrow{a} \times 10^{(\frac{-1}{\sqrt{|s|}})}),
+\text{where}\ s = 2 \times f(\overrightarrow{X_i}(t)) - f(\overrightarrow{X_i}(t-1))$$
+
 $\overrightarrow{X_i}(t)$ represents a random chromosome in iteration $t$.
 $\overrightarrow{a} \in [0,1]^D$ is a random vector.
-$f(\overrightarrow{X_i}(t))$ represents the fitness value of $\overrightarrow{X_i}(t)$. \cite{a-novel-adaptive-genetic-algorithm-for-global-optimization}
+$f(\overrightarrow{X_i}(t))$ represents the fitness value of $\overrightarrow{X_i}(t)$.
 The evolution is supposed to be optimized by adaptive genetic algorithm.
 
 Elitism can be applied in the genetic algorithm as well.
