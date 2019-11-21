@@ -13,4 +13,14 @@
 *.synctex.gz
 *.synctex*
 
+# Configuration
 config.yml
+
+# vscode
+.vscode/
+
+# python
+venv/
+
+# data
+data/*.csv
