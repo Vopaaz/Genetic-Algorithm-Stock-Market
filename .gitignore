@@ -24,3 +24,6 @@ venv/
 
 # data
 data/*.csv
+
+# python
+__pycache__/
