@@ -1,21 +1,10 @@
+import sys
+
+sys.path.append(".")
+
 import pandas as pd
 from typing import *
-
-
-class Decision(object):
-    pass
-
-
-class Buy(Decision):
-    pass
-
-
-class Sell(Decision):
-    pass
-
-
-class Hold(Decision):
-    pass
+from experiment.decision import Buy, Sell, Hold
 
 
 class Rule(object):
@@ -24,7 +13,7 @@ class Rule(object):
 
 
 class SingleMACrossover(Rule):
-    def __init__(self, n: int):
+    def __init__(self, n: int = 28):
         assert n > 1
         self.n = n
 
@@ -44,8 +33,8 @@ class SingleMACrossover(Rule):
             return Hold()
 
 
-class DoubleMACrossOver(Rule):
-    def __init__(self, short_n: int, long_n: int):
+class DoubleMACrossover(Rule):
+    def __init__(self, short_n: int = 25, long_n: int = 50):
         assert 1 < short_n < long_n
         self.short_n = short_n
         self.long_n = long_n
@@ -67,10 +56,7 @@ class DoubleMACrossOver(Rule):
 
 
 if __name__ == "__main__":
-    import sys
-
-    sys.path.append(".")
     from experiment.data import read
 
     df = read("CMS")
-    print(SingleMACrossover(5).decide(df))
+    print(SingleMACrossover().decide(df))
