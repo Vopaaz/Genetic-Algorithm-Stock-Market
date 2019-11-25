@@ -23,7 +23,7 @@ class Agent(object):
 class GeneticBitAgent(Agent):
     def __init__(self, gene=None):
         if gene is None:
-            self.gene = np.random.random(len(self.RULES))
+            self.gene = np.random.randint(0, 1, len(self.RULES))
         elif isinstance(gene, list):
             assert len(gene) == len(self.RULES)
             self.gene = np.array(gene)
