@@ -57,7 +57,7 @@ class BenchmarkAgent(Agent, KnowsFullTdf):
         self.full_tdf = read(symbol)
 
     def decide(self, tdf):
-        today = self._next_day(tdf.index[-1])
+        today = tdf.index[-1]
         tomorrow = self._next_day(today)
 
         ts = self.full_tdf.close

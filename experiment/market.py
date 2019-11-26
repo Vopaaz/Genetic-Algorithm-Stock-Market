@@ -29,7 +29,7 @@ class Stock(KnowsFullTdf):
             f"Trading start for {agent.__class__.__name__}{', with gene'+ str(list(agent.gene)) if isinstance(agent, GeneticAgent) else ''}"
         )
         while today < self.end_date:
-            tdf = self.full_tdf.loc[: today + pd.DateOffset(days=-1)]
+            tdf = self.full_tdf.loc[: today]
             decision = agent.decide(tdf)
             price = self.full_tdf.close.loc[today]
             if decision.buy() and not agent_holding:
