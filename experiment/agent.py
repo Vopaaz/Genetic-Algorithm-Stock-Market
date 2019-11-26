@@ -14,13 +14,19 @@ class Agent(object):
     RULES = [SingleMACrossover, DoubleMACrossover]
 
     def __init__(self):
-        self.rules = [rule() for rule in self.RULES]
+        self.init_rules()
+
+    def init_rules(self):
+        raise NotImplementedError
 
     def decide(self, tdf: pd.DataFrame) -> Union[Buy, Sell, Hold]:
         raise NotImplementedError
 
 
 class GeneticBitAgent(Agent):
+    def init_rules(self):
+        self.rules = [rule() for rule in self.RULES]
+
     def __init__(self, gene=None):
         if gene is None:
             self.gene = np.random.randint(0, 1, len(self.RULES))
@@ -41,7 +47,23 @@ class GeneticBitAgent(Agent):
 
 
 class BenchMarkAgent(Agent):
-    pass
+    def __init__(self, full_tdf):
+        self.full_tdf = full_tdf
+
+    def decide(self, tdf):
+        today = tdf.index.values[0]
+
+        tomorrow = today + pd.DateOffset(day=1)
+        while tomorrow not in self.full_tdf.index.values:
+            tomorrow += pd.DateOffset(day=1)
+
+        ts = self.full_tdf.close
+        if ts.loc[today] > ts.loc[tomorrow]:
+            return Sell()
+        elif ts.loc[today] < ts.loc[tomorrow]:
+            return Buy()
+        else:
+            return Hold()
 
 
 if __name__ == "__main__":

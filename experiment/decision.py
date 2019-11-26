@@ -11,6 +11,15 @@ class Decision(object):
     def __rmul__(self, other):
         return other * int(self)
 
+    def hold(self):
+        return isinstance(self, Hold)
+
+    def sell(self):
+        return isinstance(self, Sell)
+
+    def buy(self):
+        return isinstance(self, Buy)
+
 
 def make_decision(n: float) -> Decision:
     if n > 0:
