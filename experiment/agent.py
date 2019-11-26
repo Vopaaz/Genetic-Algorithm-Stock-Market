@@ -6,7 +6,9 @@ import pandas as pd
 from typing import *
 from experiment.decision import Buy, Sell, Hold, make_decision
 from experiment.rules import *
+from experiment.data import read
 import numpy as np
+from util import KnowsFullTdf
 
 
 class Agent(object):
@@ -23,7 +25,11 @@ class Agent(object):
         raise NotImplementedError
 
 
-class GeneticBitAgent(Agent):
+class GeneticAgent(Agent):
+    pass
+
+
+class GeneticBitAgent(GeneticAgent):
     def init_rules(self):
         self.rules = [rule() for rule in self.RULES]
 
@@ -46,16 +52,13 @@ class GeneticBitAgent(Agent):
         return make_decision(vote_decision)
 
 
-class BenchMarkAgent(Agent):
-    def __init__(self, full_tdf):
-        self.full_tdf = full_tdf
+class BenchmarkAgent(Agent, KnowsFullTdf):
+    def __init__(self, symbol):
+        self.full_tdf = read(symbol)
 
     def decide(self, tdf):
-        today = tdf.index.values[0]
-
-        tomorrow = today + pd.DateOffset(day=1)
-        while tomorrow not in self.full_tdf.index.values:
-            tomorrow += pd.DateOffset(day=1)
+        today = self._next_day(tdf.index[-1])
+        tomorrow = self._next_day(today)
 
         ts = self.full_tdf.close
         if ts.loc[today] > ts.loc[tomorrow]:

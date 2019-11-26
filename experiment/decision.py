@@ -11,6 +11,12 @@ class Decision(object):
     def __rmul__(self, other):
         return other * int(self)
 
+    def __repr__(self):
+        return str(self.__class__.__name__)
+
+    def __str__(self):
+        return str(self.__class__.__name__)
+
     def hold(self):
         return isinstance(self, Hold)
 
