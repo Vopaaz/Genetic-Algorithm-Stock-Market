@@ -38,7 +38,7 @@ class Stock(KnowsFullTdf):
             elif decision.sell() and agent_holding:
                 agent_holding = False
                 total_rev += price
-            logger.info(f"On {today}, agent choose to {decision} on price {price}")
+            logger.debug(f"On {today}, agent choose to {decision} on price {price}")
             today = self._next_day(today)
 
         price = self.full_tdf.close.loc[today]
