@@ -19,11 +19,11 @@ class SingleMACrossover(Rule):
 
     def decide(self, tdf):
         ts = tdf.close
-        ma_today = ts.iloc[0 : self.n].mean()
-        ma_yesterday = ts.iloc[1 : self.n + 1].mean()
+        ma_today = ts.iloc[-1 - self.n : -1].mean()
+        ma_yesterday = ts.iloc[-2 - self.n : -2].mean()
 
-        today = ts.iloc[0]
-        yesterday = ts.iloc[1]
+        today = ts.iloc[-1]
+        yesterday = ts.iloc[-2]
 
         if today > ma_today and yesterday < ma_yesterday:
             return Buy()
@@ -41,11 +41,11 @@ class DoubleMACrossover(Rule):
 
     def decide(self, tdf):
         ts = tdf.close
-        ma_short_today = ts.iloc[0 : self.short_n].mean()
-        ma_short_yesterday = ts.iloc[1 : self.short_n + 1].mean()
+        ma_short_today = ts.iloc[-1 - self.short_n : -1].mean()
+        ma_short_yesterday = ts.iloc[-2 - self.short_n : -2].mean()
 
-        ma_long_today = ts.iloc[0 : self.long_n].mean()
-        ma_long_yesterday = ts.iloc[1 : self.long_n + 1].mean()
+        ma_long_today = ts.iloc[-1 - self.long_n : -1].mean()
+        ma_long_yesterday = ts.iloc[-2 - self.long_n : -2].mean()
 
         if ma_short_today > ma_long_today and ma_short_yesterday < ma_long_yesterday:
             return Buy()
