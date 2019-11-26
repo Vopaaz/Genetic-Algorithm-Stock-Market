@@ -35,7 +35,7 @@ class GeneticBitAgent(GeneticAgent):
 
     def __init__(self, gene=None):
         if gene is None:
-            self.gene = np.random.randint(0, 1, len(self.RULES))
+            self.gene = np.random.randint(0, 2, len(self.RULES))
         elif isinstance(gene, list):
             assert len(gene) == len(self.RULES)
             self.gene = np.array(gene)
@@ -75,3 +75,5 @@ if __name__ == "__main__":
     tdf = read("CMS")
     a = GeneticBitAgent()
     print(a.decide(tdf))
+    print(isinstance(a, GeneticBitAgent))
+    
