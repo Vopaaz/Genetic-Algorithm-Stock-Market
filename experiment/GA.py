@@ -2,8 +2,9 @@ import sys
 
 sys.path.append(".")
 
-import pandas as pd
 import numpy as np
+import pandas as pd
+
 from experiment.background.agent import (
     GeneticAgent,
     GeneticBitAgent,
@@ -11,8 +12,6 @@ from experiment.background.agent import (
     GeneticSimpleAgent,
 )
 from experiment.util.config import logger
-
-logger.setLevel("DEBUG")
 
 
 class Evolution(object):
