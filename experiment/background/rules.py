@@ -13,6 +13,9 @@ class Rule(object):
 
 
 class SingleMACrossover(Rule):
+
+    N_PARAM = 1
+
     def __init__(self, n: int = 28):
         assert n > 1
         self.n = n
@@ -34,6 +37,9 @@ class SingleMACrossover(Rule):
 
 
 class DoubleMACrossover(Rule):
+
+    N_PARAM = 2
+
     def __init__(self, short_n: int = 25, long_n: int = 50):
         assert 1 < short_n < long_n
         self.short_n = short_n
