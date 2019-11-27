@@ -57,13 +57,64 @@ class DoubleMACrossover(Rule):
             return Hold()
 
 
-class RelativeStrengthIndicator(Rule):
-    def __init__(self):
-        pass
+class RelativeStrengthIndex(Rule):
+    def __init__(
+        self,
+        n: int = 14,
+        buy_signal: int = 30,
+        sell_signal: int = 70,
+        avg_method: int = 0,
+    ):
+        """Implementation of Relative Strength Index
+
+        Args:
+            n (int): Number of days
+            buy_signal (int): When RSI reaches this, buy
+            sell_signal (int): When RSI reaches this, sell
+            avg_method (int):
+                - 0: Simple Moving Average
+                - 1: Exponential Moving Average
+                - 2: Wilder's Smoothing Method
+                See https://www.macroption.com/rsi-calculation/ for detail.
+        """
+        assert n > 1
+        assert buy_signal < sell_signal
+        assert avg_method in [0, 1]
+        self.n = n
+        self.buy_signal = buy_signal
+        self.sell_signal = sell_signal
+        self.avg_method = avg_method
+
+    def _compute_RSI(self, tdf):
+        ts = tdf.close.iloc[-1 - self.n : -1].reset_index(drop=True)
+        ts_lag = tdf.close.iloc[-2 - self.n : -2].reset_index(drop=True)
+        diff = ts - ts_lag
+        up = diff[diff > 0]
+        down = -diff[diff < 0]
+
+        if self.avg_method == 0:
+            avg_up = up.sum() / self.n
+            avg_down = down.sum() / self.n
+        else:
+            raise NotImplementedError
+
+        RS = avg_up / avg_down
+        return 100 - 100 / (1 + RS)
+
+    def decide(self, tdf):
+        RSI = self._compute_RSI(tdf)
+        if RSI < self.buy_signal:
+            return Buy()
+        elif RSI > self.sell_signal:
+            return Sell()
+        else:
+            return Hold()
 
 
 if __name__ == "__main__":
-    from experiment.data import read
+    from experiment.util.data import read
 
     df = read("CMS")
-    print(SingleMACrossover().decide(df))
+    # print(SingleMACrossover().decide(df))
+
+    print(RelativeStrengthIndex()._compute_RSI(df))

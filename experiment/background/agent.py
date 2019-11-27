@@ -20,7 +20,7 @@ class Agent(object):
 
 class GeneticAgent(Agent):
 
-    RULES = [SingleMACrossover, DoubleMACrossover]
+    RULES = [SingleMACrossover, DoubleMACrossover, RelativeStrengthIndex]
 
     def __init__(self):
         self.init_rules()
