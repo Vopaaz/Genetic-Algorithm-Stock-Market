@@ -76,4 +76,4 @@ if __name__ == "__main__":
     a = GeneticBitAgent()
     print(a.decide(tdf))
     print(isinstance(a, GeneticBitAgent))
-    
+

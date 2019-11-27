@@ -1,3 +1,7 @@
+import sys
+
+sys.path.append(".")
+
 import pandas as pd
 from experiment.data import read, ALL_SYMBOLS
 from experiment.config import *
@@ -7,10 +11,6 @@ from experiment.agent import Agent, GeneticAgent, BenchmarkAgent
 import logging
 import numpy as np
 from experiment.util import KnowsFullTdf
-
-logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 
 class Market(KnowsFullTdf):
