@@ -73,7 +73,7 @@ class GeneticRealAgent(GeneticSimpleAgent):
 #   1. when initialize, loop until valid
 #       Problem: when mutate, invalid parameter genes could still be generated
 #   2. change the implementation of rules, for example make the doubleMA automatically switch
-#           short_n and long_n when it fould short_n > long_n
+#           short_n and long_n when it found short_n > long_n
 #       Problem: do not know if this is applicable in every rule
 
 # class GeneticComplexAgent(GeneticAgent):
