@@ -77,6 +77,8 @@ class GeneticRealAgent(GeneticSimpleAgent):
 #   2. change the implementation of rules, for example make the doubleMA automatically switch
 #           short_n and long_n when it found short_n > long_n
 #       Problem: do not know if this is applicable in every rule
+#   3. create a bunch of "RuleParamInitializer/Mutator", ad-hoc-ly provide initialization/mutation
+#       This seems good.
 
 # class GeneticComplexAgent(GeneticAgent):
 #     def __init__(self, gene=None):
@@ -84,6 +86,10 @@ class GeneticRealAgent(GeneticSimpleAgent):
 #             arr = np.random.random(len(self.RULES))
 #             self.gene = arr / arr.sum()
 #             self.param_gene = [
+#                 '''
+#                   Currently the N_PARAM is removed from the RULES,
+#                   whatever choice is implemented, this `rule.N_PARAM` should be gone
+#                 '''
 #                 list(np.random.randint(5, 100, rule.N_PARAM)) for rule in self.RULES
 #             ]
 #         else:
