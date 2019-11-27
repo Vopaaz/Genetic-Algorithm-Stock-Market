@@ -3,14 +3,14 @@ import sys
 sys.path.append(".")
 
 import pandas as pd
-from experiment.data import read, ALL_SYMBOLS
-from experiment.config import *
+from experiment.util.data import read, ALL_SYMBOLS
+from experiment.util.config import *
 import glob
 import os
-from experiment.agent import Agent, GeneticAgent, BenchmarkAgent
+from experiment.background.agent import Agent, GeneticAgent, BenchmarkAgent
 import logging
 import numpy as np
-from experiment.util import KnowsFullTdf
+from experiment.background.util import KnowsFullTdf
 
 
 class Market(KnowsFullTdf):

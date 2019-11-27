@@ -4,11 +4,11 @@ sys.path.append(".")
 
 import pandas as pd
 from typing import *
-from experiment.decision import Buy, Sell, Hold, make_decision
-from experiment.rules import *
-from experiment.data import read
+from experiment.background.decision import Buy, Sell, Hold, make_decision
+from experiment.background.rules import *
+from experiment.util.data import read
 import numpy as np
-from util import KnowsFullTdf
+from experiment.background.util import KnowsFullTdf
 
 
 class Agent(object):
