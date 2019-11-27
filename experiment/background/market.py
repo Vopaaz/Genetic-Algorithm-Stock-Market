@@ -2,15 +2,17 @@ import sys
 
 sys.path.append(".")
 
-import pandas as pd
-from experiment.util.data import read, ALL_SYMBOLS
-from experiment.util.config import *
 import glob
-import os
-from experiment.background.agent import Agent, GeneticAgent, BenchmarkAgent
 import logging
+import os
+
 import numpy as np
+import pandas as pd
+
+from experiment.background.agent import Agent, BenchmarkAgent, GeneticAgent
 from experiment.background.util import KnowsFullTdf
+from experiment.util.config import *
+from experiment.util.data import ALL_SYMBOLS, read
 
 
 class Market(KnowsFullTdf):
@@ -58,8 +60,8 @@ class Stock(KnowsFullTdf):
                 total_rev -= price
                 agent_holding = True
             elif decision.sell() and agent_holding:
-                agent_holding = False
                 total_rev += price
+                agent_holding = False
             logger.debug(f"On {today}, agent choose to {decision} on price {price}")
             today = self._next_day(today)
 

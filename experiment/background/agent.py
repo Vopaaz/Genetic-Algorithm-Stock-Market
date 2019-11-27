@@ -2,13 +2,15 @@ import sys
 
 sys.path.append(".")
 
-import pandas as pd
 from typing import *
-from experiment.background.decision import Buy, Sell, Hold, make_decision
-from experiment.background.rules import *
-from experiment.util.data import read
+
 import numpy as np
+import pandas as pd
+
+from experiment.background.decision import Buy, Hold, Sell, make_decision
+from experiment.background.rules import *
 from experiment.background.util import KnowsFullTdf
+from experiment.util.data import read
 
 
 class Agent(object):

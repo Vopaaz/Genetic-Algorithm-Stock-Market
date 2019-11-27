@@ -2,9 +2,11 @@ import sys
 
 sys.path.append(".")
 
-import pandas as pd
 from typing import *
-from experiment.background.decision import Buy, Sell, Hold
+
+import pandas as pd
+
+from experiment.background.decision import Buy, Hold, Sell
 
 
 class Rule(object):

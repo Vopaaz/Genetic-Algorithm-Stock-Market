@@ -5,9 +5,9 @@ sys.path.append(".")
 import pandas as pd
 from experiment.background.agent import (
     GeneticAgent,
-    GeneticSimpleAgent,
-    GeneticRealAgent,
     GeneticBitAgent,
+    GeneticRealAgent,
+    GeneticSimpleAgent,
 )
 
 

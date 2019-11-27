@@ -1,6 +1,7 @@
-import pandas as pd
-import os
 import glob
+import os
+
+import pandas as pd
 
 
 def read(symbol):
@@ -16,6 +17,6 @@ ALL_SYMBOLS = [
 ]
 
 if __name__ == "__main__":
-    print(read("CMS").loc[:pd.Timestamp(year=2016, month=1, day=5)])
+    print(read("CMS").loc[: pd.Timestamp(year=2016, month=1, day=5)])
     print(read("CMS").iloc[:2])
     print(type(read("CMS").index[0]))
