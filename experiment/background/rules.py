@@ -111,6 +111,51 @@ class RelativeStrengthIndex(Rule):
             return Hold()
 
 
+class StochasticOscillator(Rule):
+    def __init__(self, n: int = 14, buy_signal: int = 20, sell_signal: int = 80):
+        assert n > 1
+        assert buy_signal < sell_signal
+        self.n = n
+        self.buy_signal = buy_signal
+        self.sell_signal = sell_signal
+
+    def decide(self, tdf):
+        ts = tdf.close
+        C = ts.iloc[-1]
+        H = ts.iloc[-1 - self.n : -1].max()
+        L = ts.iloc[-1 - self.n : -1].min()
+        K = (C - L) / (H - L) * 100
+        if K < buy_signal:
+            return Buy()
+        elif K > sell_signal:
+            return Sell()
+        else:
+            return Hold()
+
+
+class MA918(DoubleMACrossover):
+    def __init__(self):
+        super().__init__(9, 18)
+
+
+class MA4918(Rule):
+    def __init__(self):
+        self.m1 = DoubleMACrossover(4,9)
+        self.m2 = DoubleMACrossover(9,18)
+
+    def decide(self, tdf):
+        d1 = self.m1.decide(tdf)
+        d2 = self.m2.decide(tdf)
+        if d1.sell() and d2.sell():
+            return Sell()
+        elif d1.buy() and d2.buy():
+            return Buy()
+        else:
+            return Hold()
+
+
+
+
 if __name__ == "__main__":
     from experiment.util.data import read
 
@@ -118,3 +163,4 @@ if __name__ == "__main__":
     # print(SingleMACrossover().decide(df))
 
     print(RelativeStrengthIndex()._compute_RSI(df))
+    MA918()
