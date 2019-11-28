@@ -24,7 +24,7 @@ class Experiment(object):
             best = max(evaluation)
             avg = np.mean(evaluation)
             result.append([best, avg])
-            logger.info(f"Epoch {i}'s best: {best}, average: {avg}")
+            logger.info(f"Epoch {i+1}'s best: {best}, average: {avg}")
             population = self.evolution.evolve(population, evaluation)
 
         self.population = population
