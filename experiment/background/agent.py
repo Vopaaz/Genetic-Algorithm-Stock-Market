@@ -61,8 +61,7 @@ class GeneticBitAgent(GeneticSimpleAgent):
 class GeneticRealAgent(GeneticSimpleAgent):
     def __init__(self, gene=None):
         if gene is None:
-            arr = np.random.random(len(self.RULES))
-            self.gene = arr / arr.sum()
+            self.gene = np.random.random(len(self.RULES))
         else:
             self._init_with_gene(gene)
         super().__init__()
