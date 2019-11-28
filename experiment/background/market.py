@@ -49,7 +49,7 @@ class Stock(KnowsFullTdf):
         today = self.start_date
         agent_holding = False
         total_rev = 0
-        logger.info(
+        logger.debug(
             f"Trading '{self.symbol}' start for {agent.__class__.__name__}{', with gene'+ str(list(agent.gene)) if isinstance(agent, GeneticAgent) else ''}"
         )
         while today < self.end_date:
@@ -68,7 +68,7 @@ class Stock(KnowsFullTdf):
         price = self.full_tdf.close.loc[today]
         if agent_holding:
             total_rev += price
-        logger.info(f"Trading ended. Total revenue: {total_rev}")
+        logger.debug(f"Trading ended. Total revenue: {total_rev}")
         return total_rev
 
 

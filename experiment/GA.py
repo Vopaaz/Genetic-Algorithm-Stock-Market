@@ -15,7 +15,8 @@ from experiment.util.config import logger
 
 
 class Evolution(object):
-    pass
+    def evolve(self, population, evaluation):
+        raise NotImplementedError
 
 
 class SimpleEvolution(Evolution):
