@@ -125,9 +125,9 @@ class StochasticOscillator(Rule):
         H = ts.iloc[-1 - self.n : -1].max()
         L = ts.iloc[-1 - self.n : -1].min()
         K = (C - L) / (H - L) * 100
-        if K < buy_signal:
+        if K < self.buy_signal:
             return Buy()
-        elif K > sell_signal:
+        elif K > self.sell_signal:
             return Sell()
         else:
             return Hold()
