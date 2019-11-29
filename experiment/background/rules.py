@@ -179,7 +179,7 @@ class MACD(Rule):
             return Hold()
 
     def _compute_EMA(self, ts, n):
-        return ts.iloc[-n:].ewm(span=n).iloc[-1]
+        return ts.iloc[-n:].ewm(span=n).mean().iloc[-1]
 
 
 if __name__ == "__main__":
