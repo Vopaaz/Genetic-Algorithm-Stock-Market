@@ -21,8 +21,8 @@ class SingleMACrossover(Rule):
 
     def decide(self, tdf):
         ts = tdf.close
-        ma_today = ts.iloc[-1 - self.n : -1].mean()
-        ma_yesterday = ts.iloc[-2 - self.n : -2].mean()
+        ma_today = ts.iloc[-self.n :].mean()
+        ma_yesterday = ts.iloc[-1 - self.n : -1].mean()
 
         today = ts.iloc[-1]
         yesterday = ts.iloc[-2]
@@ -43,11 +43,11 @@ class DoubleMACrossover(Rule):
 
     def decide(self, tdf):
         ts = tdf.close
-        ma_short_today = ts.iloc[-1 - self.short_n : -1].mean()
-        ma_short_yesterday = ts.iloc[-2 - self.short_n : -2].mean()
+        ma_short_today = ts.iloc[-self.short_n :].mean()
+        ma_short_yesterday = ts.iloc[-1 - self.short_n : -1].mean()
 
-        ma_long_today = ts.iloc[-1 - self.long_n : -1].mean()
-        ma_long_yesterday = ts.iloc[-2 - self.long_n : -2].mean()
+        ma_long_today = ts.iloc[-self.long_n :].mean()
+        ma_long_yesterday = ts.iloc[-1 - self.long_n : -1].mean()
 
         if ma_short_today > ma_long_today and ma_short_yesterday < ma_long_yesterday:
             return Buy()
@@ -86,8 +86,8 @@ class RelativeStrengthIndex(Rule):
         self.avg_method = avg_method
 
     def _compute_RSI(self, tdf):
-        ts = tdf.close.iloc[-1 - self.n : -1].reset_index(drop=True)
-        ts_lag = tdf.close.iloc[-2 - self.n : -2].reset_index(drop=True)
+        ts = tdf.close.iloc[-self.n :].reset_index(drop=True)
+        ts_lag = tdf.close.iloc[-1 - self.n : -1].reset_index(drop=True)
         diff = ts - ts_lag
         up = diff[diff > 0]
         down = -diff[diff < 0]
@@ -122,8 +122,8 @@ class StochasticOscillator(Rule):
     def decide(self, tdf):
         ts = tdf.close
         C = ts.iloc[-1]
-        H = ts.iloc[-1 - self.n : -1].max()
-        L = ts.iloc[-1 - self.n : -1].min()
+        H = ts.iloc[-self.n :].max()
+        L = ts.iloc[-self.n :].min()
         K = (C - L) / (H - L) * 100
         if K < self.buy_signal:
             return Buy()
@@ -166,7 +166,7 @@ class MACD(Rule):
         MACD_today = short_EMA - long_EMA
 
         tdf_yesterday = tdf.iloc[:-1]
-        
+
         short_EMA = self._compute_EMA(tdf_yesterday, self.short_n)
         long_EMA = self._compute_EMA(tdf_yesterday, self.long_n)
         MACD_yesterday = short_EMA - long_EMA
@@ -179,7 +179,7 @@ class MACD(Rule):
             return Hold()
 
     def _compute_EMA(self, tdf, n):
-        ts = tdf.close.iloc[-1 - n : -1]
+        ts = tdf.close.iloc[-n:]
         return ts.ewm(span=n).iloc[-1]
 
 
