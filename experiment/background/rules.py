@@ -5,6 +5,7 @@ sys.path.append(".")
 from typing import *
 
 import pandas as pd
+import numpy as np
 
 from experiment.background.decision import Buy, Hold, Sell
 
@@ -182,11 +183,51 @@ class MACD(Rule):
         return ts.iloc[-n:].ewm(span=n).mean().iloc[-1]
 
 
+class MoneyFlowIndex(Rule):
+    def __init__(self, n: int = 14, sell_signal: int = 20, buy_signal: int = 80):
+        self.n = n
+        self.sell_signal = sell_signal
+        self.buy_signal = buy_signal
+
+    def decide(self, tdf):
+        today_MFI = self._compute_MFI(tdf)
+        yesterday_MFI = self._compute_MFI(tdf.iloc[:-1])
+
+        if today_MFI > self.buy_signal and today_MFI < yesterday_MFI:
+            return Buy()
+        elif today_MFI < self.sell_signal and today_MFI > yesterday_MFI:
+            return Sell()
+        else:
+            return Hold()
+
+    def _compute_MFI(self, _tdf):
+
+        tdf = _tdf.iloc[-self.n :].copy(deep=True)
+        tdf_lag = _tdf.iloc[-1 - self.n : -1].copy(deep=True)
+
+        typical_price = ((tdf.high + tdf.low + tdf.close) / 3).values
+        typical_price_lag = ((tdf_lag.high + tdf_lag.low + tdf_lag.close) / 3).values
+
+        typical_price_symbol = np.vectorize(lambda x: 1 if x > 0 else -1)(
+            typical_price - typical_price_lag
+        )
+
+        raw_money_flow = typical_price_symbol * typical_price * tdf.volume
+
+        positive_flow = raw_money_flow[raw_money_flow > 0].sum()
+        negative_flow = -raw_money_flow[raw_money_flow < 0].sum()
+        money_ratio = positive_flow / negative_flow
+
+        MFI = 100 - 100 / (1 + money_ratio)
+        return MFI
+
+
 if __name__ == "__main__":
     from experiment.util.data import read
 
     df = read("CMS")
     # print(SingleMACrossover().decide(df))
 
-    print(RelativeStrengthIndex()._compute_RSI(df))
-    MA918()
+    # print(RelativeStrengthIndex()._compute_RSI(df))
+    # MA918()
+    print(MoneyFlowIndex()._compute_MFI(df))
