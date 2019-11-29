@@ -54,9 +54,9 @@ if __name__ == "__main__":
     from experiment.util.config import TRAIN_START, TRAIN_END
     import matplotlib.pyplot as plt
 
-    population = [GeneticRealAgent() for _ in range(20)]
-    evolution = RealEvolution(0.6, 0.75, 0.1)
+    population = [GeneticRealAgent() for _ in range(15)]
+    evolution = RealEvolution(0.6, 0.75, 0.5)
     market = Market(TRAIN_START, TRAIN_END)
     e = Experiment(population, evolution, market)
-    e.run(3)
+    e.run(5)
     e.visualize()
