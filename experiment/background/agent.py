@@ -27,6 +27,7 @@ class GeneticAgent(Agent):
         StochasticOscillator,
         MA918,
         MA4918,
+        MACD
     ]
 
     def __init__(self):

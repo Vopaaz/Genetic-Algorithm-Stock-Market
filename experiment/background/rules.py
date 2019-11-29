@@ -140,8 +140,8 @@ class MA918(DoubleMACrossover):
 
 class MA4918(Rule):
     def __init__(self):
-        self.m1 = DoubleMACrossover(4,9)
-        self.m2 = DoubleMACrossover(9,18)
+        self.m1 = DoubleMACrossover(4, 9)
+        self.m2 = DoubleMACrossover(9, 18)
 
     def decide(self, tdf):
         d1 = self.m1.decide(tdf)
@@ -154,6 +154,33 @@ class MA4918(Rule):
             return Hold()
 
 
+class MACD(Rule):
+    def __init__(self, short_n: int = 12, long_n: int = 26, signal: float = 0):
+        self.short_n = short_n
+        self.long_n = long_n
+        self.signal = signal
+
+    def decide(self, tdf):
+        short_EMA = self._compute_EMA(tdf, self.short_n)
+        long_EMA = self._compute_EMA(tdf, self.long_n)
+        MACD_today = short_EMA - long_EMA
+
+        tdf_yesterday = tdf.iloc[:-1]
+        
+        short_EMA = self._compute_EMA(tdf_yesterday, self.short_n)
+        long_EMA = self._compute_EMA(tdf_yesterday, self.long_n)
+        MACD_yesterday = short_EMA - long_EMA
+
+        if MACD_yesterday < self.signal and MACD_today > self.signal:
+            return Buy()
+        elif MACD_yesterday > self.signal and MACD_today < self.signal:
+            return Sell()
+        else:
+            return Hold()
+
+    def _compute_EMA(self, tdf, n):
+        ts = tdf.close.iloc[-1 - n : -1]
+        return ts.ewm(span=n).iloc[-1]
 
 
 if __name__ == "__main__":
