@@ -161,14 +161,14 @@ class MACD(Rule):
         self.signal = signal
 
     def decide(self, tdf):
-        short_EMA = self._compute_EMA(tdf, self.short_n)
-        long_EMA = self._compute_EMA(tdf, self.long_n)
+        ts = tdf.close
+        short_EMA = self._compute_EMA(ts, self.short_n)
+        long_EMA = self._compute_EMA(ts, self.long_n)
         MACD_today = short_EMA - long_EMA
 
-        tdf_yesterday = tdf.iloc[:-1]
-
-        short_EMA = self._compute_EMA(tdf_yesterday, self.short_n)
-        long_EMA = self._compute_EMA(tdf_yesterday, self.long_n)
+        ts_yesterday = ts.iloc[:-1]
+        short_EMA = self._compute_EMA(ts_yesterday, self.short_n)
+        long_EMA = self._compute_EMA(ts_yesterday, self.long_n)
         MACD_yesterday = short_EMA - long_EMA
 
         if MACD_yesterday < self.signal and MACD_today > self.signal:
@@ -178,9 +178,8 @@ class MACD(Rule):
         else:
             return Hold()
 
-    def _compute_EMA(self, tdf, n):
-        ts = tdf.close.iloc[-n:]
-        return ts.ewm(span=n).iloc[-1]
+    def _compute_EMA(self, ts, n):
+        return ts.iloc[-n:].ewm(span=n).iloc[-1]
 
 
 if __name__ == "__main__":
