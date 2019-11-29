@@ -13,3 +13,5 @@ TEST_END = pd.Timestamp(year=2018, month=12, day=28, **_kwargs)
 logging.basicConfig(format="%(asctime)s %(levelname)s | %(message)s", datefmt="%m/%d %H:%M:%S")
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+CORES = 4

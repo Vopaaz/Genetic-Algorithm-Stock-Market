@@ -48,24 +48,15 @@ class Experiment(object):
 
 
 if __name__ == "__main__":
-    from experiment.background.agent import GeneticBitAgent
+    from experiment.background.agent import GeneticBitAgent, GeneticRealAgent
     from experiment.background.market import Market
-    from experiment.GA import BitEvolution
+    from experiment.GA import BitEvolution, RealEvolution
     from experiment.util.config import TRAIN_START, TRAIN_END
     import matplotlib.pyplot as plt
 
-    population = [GeneticBitAgent() for _ in range(10)]
-    evolution = BitEvolution(0.5, 0.6, 0.1)
+    population = [GeneticRealAgent() for _ in range(20)]
+    evolution = RealEvolution(0.6, 0.75, 0.1)
     market = Market(TRAIN_START, TRAIN_END)
     e = Experiment(population, evolution, market)
-    e.run(2)
+    e.run(3)
     e.visualize()
-
-    """
-    Problem in implementation: too slow.
-    For 10 genetic bit agent, evaluation takes about 3 min.
-    If a 100 agent and 50 epoch is used, it will take 1500 min,
-    which is 25 hours to complete. This is unacceptable.
-    With adding more financial rules, this time will grow even larger.
-    Optimization needs to be done.
-    """

@@ -5,6 +5,7 @@ sys.path.append(".")
 import glob
 import logging
 import os
+from multiprocessing import Pool
 
 import numpy as np
 import pandas as pd
@@ -16,7 +17,7 @@ from experiment.util.data import ALL_SYMBOLS, read
 
 
 class Market(KnowsFullTdf):
-    def __init__(self, start_date, end_date, all_symbols=ALL_SYMBOLS):
+    def __init__(self, start_date, end_date, all_symbols=ALL_SYMBOLS, processes=CORES):
         self.stocks = [Stock(start_date, end_date, symbol) for symbol in all_symbols]
         self.benchmark = [
             stock.trade_by(agent)
@@ -24,10 +25,19 @@ class Market(KnowsFullTdf):
                 self.stocks, [BenchmarkAgent(symbol) for symbol in all_symbols]
             )
         ]
+        self.processes = processes
 
     def trade_by(self, agents):
         assert isinstance(agents, list)
-        return [[stock.trade_by(agent) for stock in self.stocks] for agent in agents]
+        if self.processes == 1:
+            return [self._trade_one_agent(agent) for agent in agents]
+        else:
+            with Pool(processes=self.processes) as pool:
+                return pool.map(self._trade_one_agent, agents)
+
+    def _trade_one_agent(self, agent):
+        assert isinstance(agent, Agent)
+        return [stock.trade_by(agent) for stock in self.stocks]
 
     def evaluate(self, agents):
         assert isinstance(agents, list)
