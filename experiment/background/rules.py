@@ -121,10 +121,9 @@ class StochasticOscillator(Rule):
         self.sell_signal = sell_signal
 
     def decide(self, tdf):
-        ts = tdf.close
-        C = ts.iloc[-1]
-        H = ts.iloc[-self.n :].max()
-        L = ts.iloc[-self.n :].min()
+        C = tdf.close.iloc[-1]
+        H = tdf.high.iloc[-self.n :].max()
+        L = tdf.low.iloc[-self.n :].min()
         K = (C - L) / (H - L) * 100
         if K < self.buy_signal:
             return Buy()
