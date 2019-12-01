@@ -45,59 +45,76 @@
 
 \section{Introduction}
 
-As an essential part of financial market, stock market is the apple of investors' eyes.
-One and one stock is regarded as investors' ``cash cow".
-To make a fortune on this, everyone attempts to seize the essence of stock price changing.
-The time series of the stocks are believed to be crucial to this.
-Individuals and securities companies analyze day by day to fulfill this challenging task.
-They focus on the prices and the trend of the stock and the market,
-trying to predict the market behaviors in the future.
+Predicting the future can only happen in science fictions,
+but predicting future trend of some certain time series is feasible.
+Time series analysis has a long history, and multiple approaches have been studied.
 
-Over two hundred different financial rules were designed to
-suggest buying or selling decisions based on historical stock price time series \cite{stock-timing-using-genetic-algorithms}.
-Some of them focus on the numeric price, while some value the trend.
-There are even some considering the behaviors of the whole market.
-Each rule has its own rationality and it will definitely indicate some features of the target stock.
-However, stock price trend consists of massive features and will be influenced by numerous factors,
-which makes it insufficient to predict the trend with any single one index.
-As Korczak's experiment implied, there's no rule consistently outperforming the others \cite{stock-timing-using-genetic-algorithms}.
-Thus which of them depict the trend best and what is the most appropriate combination of them become the core of the problem.
+The most traditional methods are statistical ones such as the well-known ARIMA model.
+Although the model is simple, it is still used in recent researches such as \cite{arima-bus-travel}.
+Some delicately designed machine learning approaches are also introduced in these years,
+varying from relatively simple support vector machine \cite{support-vector-machine}
+to complex neural network \cite{time-series-prediction-and-neural-networks}.
 
-Although some scholars argue that stock prices follow a random walk pattern
-and are only predictable with less than 50 percent accuracy,
+The one that receives most attention among all time series is probably the stock price.
+Firstly, as an essential part of financial market, stock market is the apple of investors' eyes.
+Not only financial researchers but also individuals and securities companies have
+tried their best to analyze the stock price time series and predict its behavior in the future,
+in order to make a fortune.
+Secondly, unlike most time series prediction tasks where the output must be exact future values,
+only knowing whether the future price will go up or down is already sufficient to make a trading decision.
+Therefore, the problem can be simplified thus enabling more ideas and approaches to be applicable.
+Thirdly, sufficient financial indexes can serve as domain knowledge to be combined with computer algorithms.
+
+Nowadays, over two hundred different financial rules were designed to
+suggest buying, selling or holding decisions based on historical stock price time series \cite{stock-timing-using-genetic-algorithms}.
+Each rule has its own rationality and will definitely indicate some features of the target stock.
+However, the movement of stock price is the combined result of massive number of microeconomic and macroeconomic factors,
+which makes it impossible to predict the trend with any index solely.
+As Korczak \cite{stock-timing-using-genetic-algorithms} pointed out,
+there is no rule consistently outperforming the others.
+Therefore, finding the most appropriate way to combine them becomes the key to the problem.
+
+Although some scholars argue that stock prices follow a random walk pattern,
 most experts in this field believe that the prices can be predicted with more than 50 percent accuracy,
 with eligible financial indexes and reasonable combination \cite{stock-market-prediction-with-multiple-classifiers}.
-Plenty approaches has been researched to predict the prices better,
-for instance, neutral networks used by Kimoto et al \cite{stock-market-prediction-system-with-modular-neural-networks}.
-Genetic algorithm is one of them as well.
+Plenty of approaches has been examined and we will go through some of them in the next section.
+Noticeably, genetic algorithm is widely used in related researches.
 
-In our paper we focus on finding the best combination of selected financial indexes
-to predict the prices of a single stock and help the buy and sell decisions.
-There's already some study about this, but we dig deeper for a more comprehensive and applicable solution
-\cite{genetic-algorithms-for-predicting-the-egyptian-stock-market}
-\cite{genetic-algorithms-to-optimise-the-time-to-make-stock-market-investment}.
-We base on a historical stock price time series in the past \emph{n} periods
-to build an agent to make a final decision of buying and selling.
-% TODO: how many
-More than 10 different financial rules and historical prices information
-in the past three years of 5 stocks are included by us to build our experiment.
+% for instance, neutral networks used by Kimoto et al \cite{stock-market-prediction-system-with-modular-neural-networks}.
+% Genetic algorithm is one of them as well.
 
-Our experiment is designed to predict the stock price as a search problem.
-Every rule is assigned a weight.
-All these weights constitute a vector, a new, combination rule to predict the prices.
-Each vector is considered as a chromosome.
-Running genetic algorithm on this, we program to find the optimal prediction rule for stocks.
-The final selected agent is considered to have the capacity to make the most optimal buying and selling decisions.
+In our paper, we will apply genetic algorithm to
+find the best combination of a set of financial indexes, which can help with the buy and sell decisions.
+We will dig deeper for a more comprehensive and applicable solution based on the previous works.
 
-The experiment is conducted in two phases.
-We divide our dataset into two subsets, a train dataset and a test dataset.
-In the first stage, we will only use the train dataset to find the hyper parameters that lead to the best performance here.
-In the second stage, genetic algorithm will be run on the test dataset to measure performance.
-By this approach, we not only find the optimal solution, but also avoid the over-fitting problem.
+% Implementation details, could be useful in Section Method.
 
-In the following section,
-we describe what other researchers have done in regard to the prediction in stock market,
-especially using genetic algorithm.
+% ---------------- %
+% We base on a historical stock price time series in the past \emph{n} periods
+% to build an agent to make a final decision of buying and selling.
+% % TODO: how many
+% More than 10 different financial rules and historical prices information
+% in the past three years of 5 stocks are included by us to build our experiment.
+
+% Our experiment is designed to predict the stock price as a search problem.
+% Every rule is assigned a weight.
+% All these weights constitute a vector, a new, combination rule to predict the prices.
+% Each vector is considered as a chromosome.
+% Running genetic algorithm on this, we program to find the optimal prediction rule for stocks.
+% The final selected agent is considered to have the capacity to make the most optimal buying and selling decisions.
+
+% The experiment is conducted in two phases.
+% We divide our dataset into two subsets, a train dataset and a test dataset.
+% In the first stage, we will only use the train dataset to find the hyper parameters that lead to the best performance here.
+% In the second stage, genetic algorithm will be run on the test dataset to measure performance.
+% By this approach, we not only find the optimal solution, but also avoid the over-fitting problem.
+
+% In the following section,
+% we describe what other researchers have done in regard to the prediction in stock market,
+% especially using genetic algorithm.
+
+% ---------------- %
+
 
 \section{Related Work}
 
