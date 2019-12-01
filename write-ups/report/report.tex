@@ -46,14 +46,15 @@
 \section{Introduction}
 
 As an essential part of financial market, stock market is the apple of investors' eyes.
-One and one stock is regarded as investors' "cash cow".
+One and one stock is regarded as investors' ``cash cow".
 To make a fortune on this, everyone attempts to seize the essence of stock price changing.
 The time series of the stocks are believed to be crucial to this.
 Individuals and securities companies analyze day by day to fulfill this challenging task.
 They focus on the prices and the trend of the stock and the market,
 trying to predict the market behaviors in the future.
 
-Over two hundred different financial rules were designed to suggest buying or selling decisions based on historical stock price time series. \cite{stock-timing-using-genetic-algorithms}
+Over two hundred different financial rules were designed to
+suggest buying or selling decisions based on historical stock price time series. \cite{stock-timing-using-genetic-algorithms}
 Some of them focus on the numeric price, while some value the trend.
 There are even some considering the behaviors of the whole market.
 Each rule has its own rationality and it will definitely indicate some features of the target stock.
@@ -62,18 +63,24 @@ which makes it insufficient to predict the trend with any single one index.
 As Korczak's experiment implied, there's no rule consistently outperforming the others. \cite{korczak2002stock}
 Thus which of them depict the trend best and what is the most appropriate combination of them become the core of the problem.
 
-Although some scholars argue that stock prices follow a random walk pattern and are only predictable with less than 50 percent accuracy,
+Although some scholars argue that stock prices follow a random walk pattern
+and are only predictable with less than 50 percent accuracy,
 most experts in this field believe that the prices can be predicted with more than 50 percent accuracy,
 with eligible financial indexes and reasonable combination. \cite{Qian2007}
-Plenty approaches has been researched to predict the prices better, for instance, neutral networks used by Kimoto et al. \cite{5726498}
+Plenty approaches has been researched to predict the prices better,
+for instance, neutral networks used by Kimoto et al. \cite{5726498}
 Genetic algorithm is one of them as well.
 
-In our paper we focus on finding the best combination of selected financial indexes to predict the prices of a single stock
-and help the buy and sell decisions.
-There's already some study about this, but we dig deeper for a more comprehensive and applicable solution. \cite{genetic-algorithms-for-predicting-the-egyptian-stock-market} \cite{genetic-algorithms-to-optimise-the-time-to-make-stock-market-investment}
-We base on a historical stock price time series in the past \emph{n} periods to build an agent to make a final decision of buying and selling.
-% how many
-More than 10 different financial rules and historical prices information in the past three years of 5 stocks are included by us to build our experiment.
+In our paper we focus on finding the best combination of selected financial indexes
+to predict the prices of a single stock and help the buy and sell decisions.
+There's already some study about this, but we dig deeper for a more comprehensive and applicable solution.
+\cite{genetic-algorithms-for-predicting-the-egyptian-stock-market}
+\cite{genetic-algorithms-to-optimise-the-time-to-make-stock-market-investment}
+We base on a historical stock price time series in the past \emph{n} periods
+to build an agent to make a final decision of buying and selling.
+% TODO: how many
+More than 10 different financial rules and historical prices information
+in the past three years of 5 stocks are included by us to build our experiment.
 
 Our experiment is designed to predict the stock price as a search problem.
 Every rule is assigned a weight.
@@ -100,8 +107,10 @@ And genetic algorithm is one of them.
 
 Due to the requirement to the data, some researchers choose to combine genetic and other approaches together.
 Neural networks are one of them.
-When developing a stock trading system, GFNN (genetic-algorithm-based fuzzy neural networks) are applied to build the qualitative model.
-But in these studies, genetic algorithm is only used to provide the initial weights for the FNN (fuzzy neural networks). \cite{kuo2001intelligent}
+When developing a stock trading system, GFNN (genetic-algorithm-based fuzzy neural networks)
+are applied to build the qualitative model.
+But in these studies, genetic algorithm is only used to provide the initial weights
+for the FNN (fuzzy neural networks). \cite{kuo2001intelligent}
 The core of the experiment is to learn and predict the stock market with the FNN.
 This paper will not discuss much about this.
 We will focus on studies with genetic algorithms as their key approach.
@@ -115,7 +124,8 @@ The genetic algorithm will be run on this as well.
 
 If the time series are not fuzzy, the study only needs to focus on the procedure of genetic algorithm.
 Most experiments begin with choosing appropriate trading rules.
-As mentioned, there're hundreds of existing trading rules, which is impractical to run the genetic algorithm on all of them.
+As mentioned, there're hundreds of existing trading rules,
+which is impractical to run the genetic algorithm on all of them.
 One approach for this is to categorize the rules and find representative ones.
 Moving Average and Relative Strength Index are the most common rules.
 Some other indexes are representative as well.
@@ -129,7 +139,7 @@ Assigning bits and weight on the rules and then combine them together, we can ge
 In Fuentu's study in 2006, three main rules are selected, and five indexes are coded in the algorithm. \cite{de2006genetic}
 The experiment assigned 3 bits for each index and construct a chromosome of 15 bits long.
 While some other experiments use only one binary bit to represent one financial rule. \cite{korczak2002stock}
-%what about ours
+% TODO: what about ours
 
 The mutation and crossover process are typical genetic algorithm since we got the chromosome.
 Some variants of genetic algorithm have different attitude to mutation rate and crossover rate.
@@ -139,7 +149,8 @@ In Badawy's study, he uses \emph{1} to represent the buying decision, \emph{0.5}
 based on the rules of the agent and the period it analyzing. \cite{1609619}
 With the decisions of each agent, we can evaluate the performance of them and choose the qualified chromosome.
 
-Running with appropriate evaluation function and fitness function, there're always some combinations constantly performing better.
+Running with appropriate evaluation function and fitness function,
+there're always some combinations constantly performing better.
 These winners are what we believe to be the best combinations for making buying and selling decisions.
 But there still two concerns about this approach.
 
@@ -156,12 +167,8 @@ digging deeper into the rules, adopting variants of genetic algorithms and runni
 In doing so, we will be able to avoid some common problems and discover practical results.
 
 
-
 \bibliographystyle{abbrv}
 \bibliography{report}
-
-
-
 
 
 %-------%
