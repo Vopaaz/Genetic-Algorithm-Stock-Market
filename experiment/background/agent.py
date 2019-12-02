@@ -28,7 +28,9 @@ class GeneticAgent(Agent):
         MA918,
         MA4918,
         MACD,
-        MoneyFlowIndex
+        MoneyFlowIndex,
+        CommodityChannelIndex,
+        StochasticRSI,
     ]
 
     def __init__(self):

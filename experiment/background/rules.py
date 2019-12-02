@@ -86,30 +86,35 @@ class RelativeStrengthIndex(Rule):
         self.sell_signal = sell_signal
         self.avg_method = avg_method
 
-    def _compute_RSI(self, tdf):
-        ts = tdf.close.iloc[-self.n :].reset_index(drop=True)
-        ts_lag = tdf.close.iloc[-1 - self.n : -1].reset_index(drop=True)
-        diff = ts - ts_lag
-        up = diff[diff > 0]
-        down = -diff[diff < 0]
-
-        if self.avg_method == 0:
-            avg_up = up.sum() / self.n
-            avg_down = down.sum() / self.n
-        else:
-            raise NotImplementedError
-
-        RS = avg_up / avg_down
-        return 100 - 100 / (1 + RS)
-
     def decide(self, tdf):
-        RSI = self._compute_RSI(tdf)
+        RSI = _compute_RSI(tdf.close, self.n, self.avg_method)
         if RSI < self.buy_signal:
             return Buy()
         elif RSI > self.sell_signal:
             return Sell()
         else:
             return Hold()
+
+
+def _compute_RSI(ts, n, avg_method=0):
+    _ts = ts.copy(deep=True)
+    ts = _ts.iloc[-n:].reset_index(drop=True)
+    ts_lag = _ts.iloc[-1 - n : -1].reset_index(drop=True)
+    diff = ts - ts_lag
+    up = diff[diff > 0]
+    down = -diff[diff < 0]
+
+    if avg_method == 0:
+        avg_up = up.sum() / n
+        avg_down = down.sum() / n
+    else:
+        raise NotImplementedError
+
+    if avg_down == 0:
+        return 100
+    else:
+        RS = avg_up / avg_down
+        return 100 - 100 / (1 + RS)
 
 
 class StochasticOscillator(Rule):
@@ -156,6 +161,7 @@ class MA4918(Rule):
 
 class MACD(Rule):
     def __init__(self, short_n: int = 12, long_n: int = 26, signal: float = 0):
+        assert 1 < short_n < long_n
         self.short_n = short_n
         self.long_n = long_n
         self.signal = signal
@@ -184,6 +190,8 @@ class MACD(Rule):
 
 class MoneyFlowIndex(Rule):
     def __init__(self, n: int = 14, sell_signal: int = 20, buy_signal: int = 80):
+        assert n > 1
+        assert sell_signal < buy_signal
         self.n = n
         self.sell_signal = sell_signal
         self.buy_signal = buy_signal
@@ -221,12 +229,68 @@ class MoneyFlowIndex(Rule):
         return MFI
 
 
+class CommodityChannelIndex(Rule):
+    def __init__(self, n: int = 18, buy_signal: int = -100, sell_signal: int = 100):
+        assert n > 1
+        assert buy_signal < sell_signal
+        self.n = n
+        self.buy_signal = buy_signal
+        self.sell_signal = sell_signal
+
+    def decide(self, tdf):
+        CCI = self._compute_CCI(tdf)
+        if CCI < self.buy_signal:
+            return Buy()
+        elif CCI > self.sell_signal:
+            return Sell()
+        else:
+            return Hold()
+
+    def _compute_CCI(self, tdf):
+        tdf = tdf.iloc[-self.n :].copy(deep=True)
+        typical_price = (tdf.high + tdf.low + tdf.close) / 3
+        p = typical_price.iloc[-1]
+        SMA = typical_price.mean()
+        MD = typical_price.mad()
+        return ((p - SMA) / MD) / 0.015
+
+
+class StochasticRSI(Rule):
+    def __init__(self, n: int = 14, buy_signal: float = 0.2, sell_signal: float = 0.8):
+        assert n > 1
+        assert buy_signal < sell_signal
+        self.n = n
+        self.buy_signal = buy_signal
+        self.sell_signal = sell_signal
+
+    def decide(self, tdf):
+        stochRSI = self._compute_stochRSI(tdf.close)
+        if stochRSI < self.buy_signal:
+            return Buy()
+        elif stochRSI > self.sell_signal:
+            return Sell()
+        else:
+            return Hold()
+
+    def _compute_stochRSI(self, ts):
+        now_RSI = _compute_RSI(ts, self.n)
+        old_RSIs = [
+            _compute_RSI(ts.iloc[-self.n - i : -i], i) for i in range(1, self.n)
+        ]
+        RSIs = old_RSIs + [now_RSI]
+        min_RSI = min(RSIs)
+        max_RSI = max(RSIs)
+        return (now_RSI - min_RSI) / (max_RSI - min_RSI)
+
+
 if __name__ == "__main__":
     from experiment.util.data import read
 
     df = read("CMS")
     # print(SingleMACrossover().decide(df))
-
-    # print(RelativeStrengthIndex()._compute_RSI(df))
+    # print(RelativeStrengthIndex().decide(df))
+    print(_compute_RSI(df.close, 15))
     # MA918()
-    print(MoneyFlowIndex()._compute_MFI(df))
+    # print(CommodityChannelIndex()._compute_CCI(df.iloc[:-15]))
+    print(StochasticRSI()._compute_stochRSI(df.close.iloc[:-11]))
+    print(StochasticRSI().decide(df.iloc[:-11]))
