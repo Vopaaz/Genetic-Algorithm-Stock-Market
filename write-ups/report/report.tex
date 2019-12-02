@@ -19,7 +19,7 @@
 
 \defaultfontfeatures{%
 	RawFeature={%
-		+swsh,
+		% +swsh,
 		+calt
 	}%
 }
@@ -88,7 +88,12 @@ Noticeably, genetic algorithm is widely used in related researches.
 % for instance, neutral networks used by Kimoto et al \cite{stock-market-prediction-system-with-modular-neural-networks}.
 % Genetic algorithm is one of them as well.
 
-% Intro GA
+Genetic algorithm is an adaptive heuristic search method,
+inspired by the natural process of genetic evolution.
+It can quickly generate high-quality solutions to optimization problems, such as scheduling and shortest path,
+and modeling system where randomness is involved, such as the stock market,
+by simulating the selection, crossover and mutation procedures in the nature
+\cite{genetic-algorithm-review-and-application}.
 
 In our paper, we will apply genetic algorithm to
 find the best combination of a set of trading rules, which can help with the buy and sell decisions.
@@ -130,8 +135,54 @@ then look into its application on the stock time series prediction.
 
 \subsection{Genetic Algorithm}
 
+Genetic algorithm was invented in the early 1970s by John Holland \cite{genetic-algorithm-review-and-application}.
+It is based on the mechanics of natural genetic selection.
+To conduct GA, a ``chromosome'' must be defined to represent a solution to the problem.
+A chromosome is a sequence of alleles, such as bit.
+The genetic features of such representation enables crossover and mutation,
+in order to exchange information with each other \cite{an-object-oriented-environment-for-specification}.
+A fitness function, which can evaluate the solution, has to be defined as well.
+It will be used to select those chromosomes that survive.
 
+The general steps of genetic algorithm is as follows:
+\begin{enumerate}
+	\item Initialization. Some chromosomes are randomly generated to form a population.
+	\item Selection. During each generation, a proportion of the existing population will be selected
+		through a process, where fitter solutions, measured by the fitness function, are more likely to be
+		selected. They are used to generate population for the next generation.
+	\item Reproduction. A second generation population is bred by the previous generation. There are typically
+		two genetic operators involved in this step:
+		\begin{enumerate}
+			\item Crossover. Parent chromosomes are selected from the survivors and their genes are combined in some certain way
+				to create a new chromosome.
+			\item Mutation. Some genes in some chromosomes are randomly chosen and changed.
+		\end{enumerate}
+		Generally, the population size is preserved throughout each generation,
+		so the selection and reproduction process should counterbalance each other's effect on the number of chromosomes.
+	\item Termination. The selection and reproduction are repeated several times until a termination condition has been reached.
+		Common termination conditions can be:
+		\begin{enumerate}
+			\item A solution is found which satisfies a minimum fitness criteria
+			\item A fixed number of iteration is reached
+			\item The fitness value of the best chromosomes in several successive generations is not improving
+		\end{enumerate}
+\end{enumerate}
 
+As the genetic algorithm keeps developing, several variants are proposed.
+The first one is the chromosome representation.
+Traditionally, the chromosome consists of a series of binary bits.
+However, in some problem settings, the gene can be a floating point number
+\cite{an-experimental-comparison-of-binary-and-floating}, or even complex data structures like
+list or map \cite{helga-a-heterogeneous-encoding}.
+The second one is elitism \cite{removing-the-genetics-from-the-standard-genetic-algorithm},
+which requires the selection and reproduction to be carefully designed so that
+the several best chromosome must be preserved to the next generation.
+The third one is adaptive genetic algorithm \cite{adaptive-probabilities-of-crossover-and-mutation}.
+Unlike the traditional ones whose strategy of selection and reproduction is constant,
+the possibility of selection, crossover and mutation will vary in adaptive GA.
+The adjustment of these possibilities is related to the fitness value.
+All these variants improved some aspect of the genetic algorithm,
+and we will implement some of them in our experiment.
 
 
 \subsection{Application of GA to Stock Price Prediction}
@@ -233,10 +284,6 @@ but it still requires examination
 \cite{stock-timing-using-genetic-algorithms}.
 Our work will be based on the approach introduced above,
 try to address these two issues and hopefully find other insights.
-
-
-\subsection{Financial Indexes and Trading Rules}
-
 
 
 \bibliographystyle{abbrv}
