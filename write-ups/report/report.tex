@@ -28,6 +28,9 @@
 
 %-----------%
 
+\usepackage{amsmath}
+\usepackage{amssymb}
+
 \title{Introduction to Artificial Intelligence Writing 5}
 \author{YiFan Li\\ZeYuan Yang}
 \date{\today}
@@ -63,28 +66,32 @@ in order to make a fortune.
 Secondly, unlike most time series prediction tasks where the output must be exact future values,
 only knowing whether the future price will go up or down is already sufficient to make a trading decision.
 Therefore, the problem can be simplified thus enabling more ideas and approaches to be applicable.
-Thirdly, sufficient financial indexes can serve as domain knowledge to be combined with computer algorithms.
+Thirdly, sufficient financial indexes and trading rules
+can serve as domain knowledge to be combined with computer algorithms.
 
-Nowadays, over two hundred different financial rules were designed to
-suggest buying, selling or holding decisions based on historical stock price time series \cite{stock-timing-using-genetic-algorithms}.
+Nowadays, their are numerous financial indexes, and over two hundred different trading rules were
+built upon them to suggest buying, selling or holding decisions,
+based on historical stock price time series \cite{stock-timing-using-genetic-algorithms}.
 Each rule has its own rationality and will definitely indicate some features of the target stock.
 However, the movement of stock price is the combined result of massive number of microeconomic and macroeconomic factors,
-which makes it impossible to predict the trend with any index solely.
+which makes it impossible to predict the trend with any index or rule solely.
 As Korczak \cite{stock-timing-using-genetic-algorithms} pointed out,
 there is no rule consistently outperforming the others.
-Therefore, finding the most appropriate way to combine them becomes the key to the problem.
+Therefore, finding the most appropriate way to utilize them becomes the key to the problem.
 
 Although some scholars argue that stock prices follow a random walk pattern,
 most experts in this field believe that the prices can be predicted with more than 50 percent accuracy,
-with eligible financial indexes and reasonable combination \cite{stock-market-prediction-with-multiple-classifiers}.
-Plenty of approaches has been examined and we will go through some of them in the next section.
+with eligible trading rules and reasonable combination \cite{stock-market-prediction-with-multiple-classifiers}.
+Plenty of approaches has been examined and we will go through some of them in the literature review.
 Noticeably, genetic algorithm is widely used in related researches.
 
 % for instance, neutral networks used by Kimoto et al \cite{stock-market-prediction-system-with-modular-neural-networks}.
 % Genetic algorithm is one of them as well.
 
+% Intro GA
+
 In our paper, we will apply genetic algorithm to
-find the best combination of a set of financial indexes, which can help with the buy and sell decisions.
+find the best combination of a set of trading rules, which can help with the buy and sell decisions.
 We will dig deeper for a more comprehensive and applicable solution based on the previous works.
 
 % Implementation details, could be useful in Section Method.
@@ -118,80 +125,118 @@ We will dig deeper for a more comprehensive and applicable solution based on the
 
 \section{Related Work}
 
-The study of stock price prediction went through a long history.
-Complicated algorithms and artificial intelligence were applied to the analysis at last century
-\cite{application-of-neural-network-to-technical-analysis}.
-But until nowadays, there is still not a sure card for this problem.
-Neural networks, support vector regression and other algorithms domain this field
-\cite{textual-analysis-of-stock-market-prediction}.
-And genetic algorithm is one of them.
+We will go through related works about the genetic algorithms first,
+then look into its application on the stock time series prediction.
 
-Due to the requirement to the data, some researchers choose to combine genetic and other approaches together.
-Neural networks are one of them.
-When developing a stock trading system, GFNN (genetic-algorithm-based fuzzy neural networks)
-are applied to build the qualitative model.
-But in these studies, genetic algorithm is only used to provide the initial weights
-for the FNN (fuzzy neural networks) \cite{an-intelligent-stock-trading-decision-support-system}.
-The core of the experiment is to learn and predict the stock market with the FNN.
-This paper will not discuss much about this.
-We will focus on studies with genetic algorithms as their key approach.
+\subsection{Genetic Algorithm}
 
-The basic background of the application of genetic algorithm is the stock price time series.
-The experiment will vary on whether the time series are fuzzy or not.
-If fuzzy time series, the percentage of price change needs to be converted into fuzzy value.
-The fuzzy logic relationship and FLRs will be extracted and normalized to get a weight matrix
-\cite{a-novel-stock-forecasting-model-based-on-fuzzy-time-series}.
-Fitness functions can only be designed based on this weighted matrix.
-The genetic algorithm will be run on this as well.
 
-If the time series are not fuzzy, the study only needs to focus on the procedure of genetic algorithm.
-Most experiments begin with choosing appropriate trading rules.
-As mentioned, there're hundreds of existing trading rules,
-which is impractical to run the genetic algorithm on all of them.
-One approach for this is to categorize the rules and find representative ones.
-Moving Average and Relative Strength Index are the most common rules.
-Some other indexes are representative as well.
-For example, \emph{rate of change} represents the price trend between current period and the past \emph{n} period.
-However, only by experimenting and testing can we find which rules are helpful to making decisions.
 
-The chromosomes are constructed based on the trading rules.
-They consist of the weight of the selected rules.
-For a single stock price time series, each trading rule will indicate a decision for buying or selling.
-Assigning bits and weight on the rules and then combine them together, we can get the chromosome.
-In Fuentu's study in 2006, three main rules are selected, and five indexes are coded in the algorithm
-\cite{genetic-algorithms-to-optimise-the-time-to-make-stock-market-investment}.
-The experiment assigned 3 bits for each index and construct a chromosome of 15 bits long.
-While some other experiments use only one binary bit to represent one financial rule
-\cite{stock-timing-using-genetic-algorithms}.
-% TODO: what about ours
 
-The mutation and crossover process are typical genetic algorithm since we got the chromosome.
-Some variants of genetic algorithm have different attitude to mutation rate and crossover rate.
-But we have not found study designing the experiment based on them.
-As for the fitness function, each agent applies their combination rules to make decisions.
-In Badawy's study, he uses \emph{1} to represent the buying decision, \emph{0.5} for doing nothing and \emph{0} for selling,
-based on the rules of the agent and the period it analyzing
+
+\subsection{Application of GA to Stock Price Prediction}
+
+Given the stock price time series as the original data,
+Stephen Leung et al. \cite{a-novel-stock-forecasting-model-based-on-fuzzy-time-series}
+modeled it as a fuzzy time series
+by converting the percentage of price change into fuzzy value.
+The fuzzy logic relationship are extracted and classified to form fuzzy logic relationship groups (FLRGs).
+FLRGs will then be normalized to get a weight matrix.
+Each gene in the chromosome corresponds to a fuzzy value
+and the whole chromosome will output a prediction.
+The fitness function used in the genetic algorithm is:
+$$
+\text{RMSE} =
+\sqrt{ \dfrac {\sum \limits_{t=1}^{n}\left(\operatorname{actual}(t) - \operatorname{predicted}(t)\right)^2 } {n}}
+$$
+
+One technique in their approach is worth mentioning.
+The tournament method is used to select survivors in the previous generation.
+Several ``tournaments" among a few chromosomes chosen at random from the population are conducted.
+The winner of each tournament (the one with the best fitness) is selected for crossover.
+Comparing with the traditional approach of directly selecting the good ones from the whole population,
+it can improve gene diversity thus prevent GA from being trapped in local optimum
+\cite{a-note-on-boltzmann-tournament-selecttion}.
+
+Applying the fuzzy logic as well, Kuo, Ren Jie and his team \cite{an-intelligent-stock-trading-decision-support-system}
+further choose to combine genetic and neural networks together.
+They developed a stock trading system, using GFNN (genetic-algorithm-based fuzzy neural networks)
+to build the qualitative model.
+The basic model is a FNN (fuzzy neural network), and
+genetic algorithm is used to provide the initial weights and select hyper parameters.
+This research and some similar ones utilized the optimization feature of genetic algorithm,
+but put more emphasis on other techniques.
+
+In addition to those combining multiple methodologies to build a complex model
+without the help of domain knowledge,
+more studies uses only GA as the algorithm and take the financial indexes and trading rules into account.
+They no longer produce exact value for future time series, but provide trading decisions.
+As we mentioned before, there are numerous financial indexes,
+each summarizing one feature of the stock price time series.
+They can be used to build trading rules, which will indicate a decision for buying, selling or holding.
+It is the strategy to utilized them that is optimized in those researches.
+However, the way they model the problem setting may be slightly different.
+
+Lin Li et al. \cite{the-applications-of-genetic-algorithms-in-stock-market-data-mining}
+arbitrarily picked one trading rule, ``the filter rule", and optimize the choice of its parameters.
+The fitness function is the profit of trading using its decision.
+Comparing with brute force grid search, genetic algorithm saved a lot of running time,
+but loses very little precision.
+Nevertheless, only using one trading rule limit the model's performance, hence
+the profit is still significantly lower than that of human trader.
+Most studies are focused on the way of combining multiple financial indexes.
+
+Fuentu et al. \cite{genetic-algorithms-to-optimise-the-time-to-make-stock-market-investment} selected
+three financial indexes, RSI, MACD and Stochastic Index,
+and five of their variants are coded in the algorithm.
+The goal is to find the best time to buy stock, indicated by the values of the five index variants.
+Each gene in the chromosome represents an interval of the value of a financial index,
+and the fitness function is calculated as below:
+\begin{enumerate}
+\item If there is a time span that could match all the financial indexes represented by the chromosome,
+	the chromosome's fitness value is the profit of making the buying decision at the start of that time span.
+\item If there is no such time span, the chromosome will not be selected into the next generation.
+\end{enumerate}
+In the future, when the five financial indexes have the value represented by the best chromosome,
+it can be concluded to be the best time to buy a stock.
+
+
+In some other researches
+\cite{genetic-algorithms-for-predicting-the-egyptian-stock-market}
+\cite{stock-timing-using-genetic-algorithms}
+, the suggestions of trading rules are integrated to give a final trading decision
+and such integration is optimized with genetic algorithm.
+
+Firstly, a set of representative trading rules are selected to examine,
+such as Moving Average and Relative Strength Index.
+Each gene in the chromosome corresponds to one rule,
+with only 1 and 0 as their possible values
+representing whether the rule should be considered in the final decision.
+The final decision is the voting result of all the rules considered.
+On each day in the stock time series, the chromosome will give such a final decision,
+and the fitness function is the profit made by these decisions.
+After that, general genetic algorithm can be applied to find the best chromosome.
+
+This approach is intuitive and relatively easy to implement.
+Rohit and Kumkum \cite{a-hybrid-machine-learning-system-for-stock-market-forecasting}
+take advantage of it and further uses support vector machine
+to determine the weight of each rule in the final decision.
+
+Two concerns about this approach are raised, though.
+Firstly, the previous experiments are always run on one stock.
+Whether this methodology is suitable for more stocks in the market remains a problem
 \cite{genetic-algorithms-for-predicting-the-egyptian-stock-market}.
-With the decisions of each agent, we can evaluate the performance of them and choose the qualified chromosome.
-
-Running with appropriate evaluation function and fitness function,
-there're always some combinations constantly performing better.
-These winners are what we believe to be the best combinations for making buying and selling decisions.
-But there still two concerns about this approach.
-
-Fist, experiment is always run on limited stocks.
-Whether our result is suitable for the majority stocks in the market requires observation.
-Even some experts argue that one set of rules found by algorithms are not efficient even in a group of stocks
+Secondly, whether the resulting chromosome, i.e. combination of trading rules,
+remains useful as time goes by is unknown.
+Some experts argue that the influence of time is not obvious,
+but it still requires examination
 \cite{stock-timing-using-genetic-algorithms}.
-The second concern is whether the result is useful as time goes by.
-Our experimental base is the historical price data.
-If the historical data exceeds, the result may vary.
-However, there are also some opinions that the influence of time is not obvious
-\cite{stock-timing-using-genetic-algorithms}.
+Our work will be based on the approach introduced above,
+try to address these two issues and hopefully find other insights.
 
-Our work designs the experiment similar as the mentioned approach,
-digging deeper into the rules, adopting variants of genetic algorithms and running in two phases.
-In doing so, we will be able to avoid some common problems and discover practical results.
+
+\subsection{Financial Indexes and Trading Rules}
+
 
 
 \bibliographystyle{abbrv}
