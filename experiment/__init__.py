@@ -14,7 +14,7 @@ class Experiment(object):
         self.evolution = evolution
         self.market = market
 
-    def run(self, epoch):
+    def train(self, epoch):
         logger.info("Experiment start.")
         population = self.population
         result = []
@@ -39,9 +39,19 @@ class Experiment(object):
         self.history = pd.DataFrame(result, columns=["best", "avg"])
         return self.history
 
-    def visualize(self):
+    def test(self, market):
+        logger.info("Start testing.")
+        test_eval = market.evaluate(self.population)
+        self.test_max = max(test_eval)
+        self.test_mean = np.mean(test_eval)
+        logger.info(f"Test best: {self.test_max}, average: {self.test_mean}")
+
+    def visualize_train_history(self):
         assert hasattr(self, "history")
         self.history.plot()
+        if hasattr(self, "test_max") and hasattr(self, "test_mean"):
+            plt.axhline(self.test_max, color="green")
+            plt.axhline(self.test_mean, color="burlywood")
         plt.xlabel("Epoch")
         plt.ylabel("Performance")
         plt.show()
@@ -51,12 +61,14 @@ if __name__ == "__main__":
     from experiment.background.agent import GeneticBitAgent, GeneticRealAgent
     from experiment.background.market import Market
     from experiment.GA import BitEvolution, RealEvolution
-    from experiment.util.config import TRAIN_START, TRAIN_END
+    from experiment.util.config import TRAIN_START, TRAIN_END, TEST_START, TEST_END
     import matplotlib.pyplot as plt
 
     population = [GeneticRealAgent() for _ in range(15)]
-    evolution = RealEvolution(0.6, 0.75, 0.5)
+    evolution = RealEvolution(0.6, 0.75, 0.1)
     market = Market(TRAIN_START, TRAIN_END)
+    test_market = Market(TEST_START, TEST_END)
     e = Experiment(population, evolution, market)
-    e.run(5)
-    e.visualize()
+    e.train(5)
+    e.test(test_market)
+    e.visualize_train_history()
