@@ -189,21 +189,21 @@ class MACD(Rule):
 
 
 class MoneyFlowIndex(Rule):
-    def __init__(self, n: int = 14, sell_signal: int = 20, buy_signal: int = 80):
+    def __init__(self, n: int = 14, buy_signal: int = 10, sell_signal: int = 90):
         assert n > 1
-        assert sell_signal < buy_signal
+        assert buy_signal < sell_signal
         self.n = n
-        self.sell_signal = sell_signal
         self.buy_signal = buy_signal
+        self.sell_signal = sell_signal
 
     def decide(self, tdf):
         today_MFI = self._compute_MFI(tdf)
         yesterday_MFI = self._compute_MFI(tdf.iloc[:-1])
 
-        if today_MFI > self.buy_signal and today_MFI < yesterday_MFI:
-            return Buy()
-        elif today_MFI < self.sell_signal and today_MFI > yesterday_MFI:
+        if today_MFI > self.sell_signal:
             return Sell()
+        elif today_MFI < self.buy_signal:
+            return Buy()
         else:
             return Hold()
 
@@ -218,8 +218,9 @@ class MoneyFlowIndex(Rule):
         typical_price_symbol = np.vectorize(lambda x: 1 if x > 0 else -1)(
             typical_price - typical_price_lag
         )
+        typical_price_symbol[0] = 0
 
-        raw_money_flow = typical_price_symbol * typical_price * tdf.volume
+        raw_money_flow = typical_price_symbol * typical_price * tdf.volume.values
 
         positive_flow = raw_money_flow[raw_money_flow > 0].sum()
         negative_flow = -raw_money_flow[raw_money_flow < 0].sum()
@@ -230,29 +231,38 @@ class MoneyFlowIndex(Rule):
 
 
 class CommodityChannelIndex(Rule):
-    def __init__(self, n: int = 18, buy_signal: int = -100, sell_signal: int = 100):
-        assert n > 1
-        assert buy_signal < sell_signal
-        self.n = n
-        self.buy_signal = buy_signal
+    def __init__(
+        self,
+        CCI_n: int = 20,
+        trend_n: int = 5,
+        sell_signal: int = -100,
+        buy_signal: int = 100,
+    ):
+        assert CCI_n > 1
+        assert trend_n > 1
+        assert sell_signal < buy_signal
+        self.CCI_n = CCI_n
+        self.trend_n = trend_n
         self.sell_signal = sell_signal
+        self.buy_signal = buy_signal
 
     def decide(self, tdf):
-        CCI = self._compute_CCI(tdf)
-        if CCI < self.buy_signal:
+        now_CCI = self._compute_CCI(tdf)
+        old_CCIs = [self._compute_CCI(tdf.iloc[:-i]) for i in range(1, self.trend_n)]
+        if now_CCI > self.buy_signal and now_CCI > max(old_CCIs):
             return Buy()
-        elif CCI > self.sell_signal:
+        elif now_CCI < self.sell_signal and now_CCI > min(old_CCIs):
             return Sell()
         else:
             return Hold()
 
-    def _compute_CCI(self, tdf):
-        tdf = tdf.iloc[-self.n :].copy(deep=True)
+    def _compute_CCI(self, _tdf):
+        tdf = _tdf.iloc[-self.CCI_n :].copy(deep=True)
         typical_price = (tdf.high + tdf.low + tdf.close) / 3
         p = typical_price.iloc[-1]
         SMA = typical_price.mean()
         MD = typical_price.mad()
-        return ((p - SMA) / MD) / 0.015
+        return (p - SMA) / (MD * 0.015)
 
 
 class StochasticRSI(Rule):
@@ -274,12 +284,9 @@ class StochasticRSI(Rule):
 
     def _compute_stochRSI(self, ts):
         now_RSI = _compute_RSI(ts, self.n)
-        old_RSIs = [
-            _compute_RSI(ts.iloc[-self.n - i : -i], i) for i in range(1, self.n)
-        ]
-        RSIs = old_RSIs + [now_RSI]
-        min_RSI = min(RSIs)
-        max_RSI = max(RSIs)
+        old_RSIs = [_compute_RSI(ts.iloc[:-i], self.n) for i in range(1, self.n)]
+        min_RSI = min(old_RSIs)
+        max_RSI = max(old_RSIs)
         return (now_RSI - min_RSI) / (max_RSI - min_RSI)
 
 
