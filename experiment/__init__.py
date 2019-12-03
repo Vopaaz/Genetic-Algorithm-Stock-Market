@@ -46,7 +46,7 @@ class Experiment(object):
         self.test_mean = np.mean(test_eval)
         logger.info(f"Test best: {self.test_max}, average: {self.test_mean}")
 
-    def visualize_train_history(self):
+    def visualize(self, filename=None):
         assert hasattr(self, "history")
         self.history.plot()
         if hasattr(self, "test_max") and hasattr(self, "test_mean"):
@@ -54,7 +54,10 @@ class Experiment(object):
             plt.axhline(self.test_mean, color="burlywood")
         plt.xlabel("Epoch")
         plt.ylabel("Performance")
-        plt.show()
+        if filename:
+            plt.savefig(filename)
+        else:
+            plt.show()
 
 
 if __name__ == "__main__":
@@ -71,4 +74,4 @@ if __name__ == "__main__":
     e = Experiment(population, evolution, market)
     e.train(5)
     e.test(test_market)
-    e.visualize_train_history()
+    e.visualize()
