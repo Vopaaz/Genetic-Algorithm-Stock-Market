@@ -224,10 +224,12 @@ class MoneyFlowIndex(Rule):
 
         positive_flow = raw_money_flow[raw_money_flow > 0].sum()
         negative_flow = -raw_money_flow[raw_money_flow < 0].sum()
-        money_ratio = positive_flow / negative_flow
-
-        MFI = 100 - 100 / (1 + money_ratio)
-        return MFI
+        if negative_flow == 0:
+            return 100
+        else:
+            money_ratio = positive_flow / negative_flow
+            MFI = 100 - 100 / (1 + money_ratio)
+            return MFI
 
 
 class CommodityChannelIndex(Rule):
