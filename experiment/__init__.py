@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 from experiment.util.config import logger
-
+import matplotlib.pyplot as plt
 
 class Experiment(object):
     def __init__(self, population, evolution, market):
@@ -61,17 +61,20 @@ class Experiment(object):
 
 
 if __name__ == "__main__":
-    from experiment.background.agent import GeneticBitAgent, GeneticRealAgent
+    from experiment.background.agent import (
+        GeneticBitAgent,
+        GeneticRealAgent,
+        GeneticComplexAgent,
+    )
     from experiment.background.market import Market
-    from experiment.GA import BitEvolution, RealEvolution
+    from experiment.GA import BitEvolution, RealEvolution, ComplexEvolution
     from experiment.util.config import TRAIN_START, TRAIN_END, TEST_START, TEST_END
-    import matplotlib.pyplot as plt
 
-    population = [GeneticRealAgent() for _ in range(15)]
-    evolution = RealEvolution(0.6, 0.75, 0.1)
+    population = [GeneticComplexAgent() for _ in range(10)]
+    evolution = ComplexEvolution(0.6, 0.75, 0.1)
     market = Market(TRAIN_START, TRAIN_END)
     test_market = Market(TEST_START, TEST_END)
     e = Experiment(population, evolution, market)
-    e.train(5)
+    e.train(3)
     e.test(test_market)
     e.visualize()

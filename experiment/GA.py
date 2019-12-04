@@ -15,11 +15,6 @@ from experiment.util.config import logger
 
 
 class Evolution(object):
-    def evolve(self, population, evaluation):
-        raise NotImplementedError
-
-
-class SimpleEvolution(Evolution):
     def __init__(
         self,
         survival_rate: float,
@@ -88,6 +83,14 @@ class SimpleEvolution(Evolution):
             for _ in range(target_num)
         ]
 
+    def _mutate(self, agents):
+        agents = list(np.random.permutation(agents))
+        point = int(len(agents) * self.mutation_rate)
+        mutate, keep = agents[:point], agents[point:]
+        return keep + [self._mutate_agent(agent) for agent in mutate]
+
+
+class SimpleEvolution(Evolution):
     def _crossover_inner(self, p1, p2):
         assert type(p1) == type(p2)
         g1, g2 = p1.gene, p2.gene
@@ -99,12 +102,6 @@ class SimpleEvolution(Evolution):
         )
         return new_agent
 
-    def _mutate(self, agents):
-        agents = list(np.random.permutation(agents))
-        point = int(len(agents) * self.mutation_rate)
-        mutate, keep = agents[:point], agents[point:]
-        return keep + [self._mutate_agent(agent) for agent in mutate]
-
 
 class BitEvolution(SimpleEvolution):
     def _mutate_agent(self, agent):
@@ -112,7 +109,7 @@ class BitEvolution(SimpleEvolution):
             [
                 (
                     bit
-                    if np.random.random(1)[0] > self.mutation_bitwise_rate
+                    if np.random.uniform() < self.mutation_bitwise_rate
                     else np.random.randint(0, 2)
                 )
                 for bit in agent.gene
@@ -130,8 +127,8 @@ class RealEvolution(SimpleEvolution):
             [
                 (
                     real
-                    if np.random.random(1)[0] > self.mutation_bitwise_rate
-                    else np.random.random(1)[0]
+                    if np.random.uniform() < self.mutation_bitwise_rate
+                    else np.random.uniform()
                 )
                 for real in agent.gene
             ]
@@ -143,7 +140,38 @@ class RealEvolution(SimpleEvolution):
 
 
 class ComplexEvolution(Evolution):
-    pass
+    def _crossover_inner(self, p1, p2):
+        assert type(p1) == type(p2)
+        gene1, gene2 = p1.gene, p2.gene
+        param1, param2 = p1.param_gene, p2.param_gene
+        assert len(gene1) == len(gene2) == len(param1) == len(param2)
+
+        choice = np.random.randint(0, 2, len(gene1))
+        new_agent = p1.__class__(
+            [(gene1[i] if choice[i] == 0 else gene2[i]) for i in range(len(choice))],
+            [(param1[i] if choice[i] == 0 else param2[i]) for i in range(len(choice))],
+        )
+        logger.debug(
+            f"Crossover of agents with gene '{gene1}', '{param1}' and '{gene2}', '{param2}' produces new agent with gene '{new_agent.gene}', '{new_agent.param_gene}'."
+        )
+        return new_agent
+
+    def _mutate_agent(self, agent):
+        choice = np.random.random(len(agent.gene)) < self.mutation_bitwise_rate
+        new_agent = agent.__class__(
+            [
+                (agent.gene[i] if choice[i] else np.random.uniform())
+                for i in range(len(choice))
+            ],
+            [
+                (agent.param_gene[i] if choice[i] else agent.rules[i].generate_param())
+                for i in range(len(choice))
+            ],
+        )
+        logger.debug(
+            f"Mutating agent's gene from '{agent.gene}' to '{new_agent.gene}', param_gene from '{agent.param_gene}' to '{new_agent.param_gene}' "
+        )
+        return new_agent
 
 
 if __name__ == "__main__":

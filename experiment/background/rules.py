@@ -14,6 +14,10 @@ class Rule(object):
     def decide(self, tdf: pd.DataFrame) -> Union[Buy, Sell, Hold]:
         raise NotImplementedError
 
+    @staticmethod
+    def generate_param():
+        raise NotImplementedError
+
 
 class SingleMACrossover(Rule):
     def __init__(self, n: int = 28):
@@ -34,6 +38,10 @@ class SingleMACrossover(Rule):
             return Sell()
         else:
             return Hold()
+
+    @staticmethod
+    def generate_param():
+        return [np.random.randint(10, 50)]
 
 
 class DoubleMACrossover(Rule):
@@ -56,6 +64,14 @@ class DoubleMACrossover(Rule):
             return Sell()
         else:
             return Hold()
+
+    @staticmethod
+    def generate_param():
+        r1 = np.random.randint(10, 50)
+        r2 = np.random.randint(10, 50)
+        if r1 == r2:
+            r1 += 1
+        return [min(r1, r2), max(r1, r2)]
 
 
 class RelativeStrengthIndex(Rule):
@@ -94,6 +110,15 @@ class RelativeStrengthIndex(Rule):
             return Sell()
         else:
             return Hold()
+
+    @staticmethod
+    def generate_param():
+        return [
+            np.random.randint(10, 30),
+            np.random.randint(1, 50),
+            np.random.randint(51, 100),
+            0,
+        ]
 
 
 def _compute_RSI(ts, n, avg_method=0):
@@ -137,10 +162,22 @@ class StochasticOscillator(Rule):
         else:
             return Hold()
 
+    @staticmethod
+    def generate_param():
+        return [
+            np.random.randint(10, 30),
+            np.random.randint(1, 50),
+            np.random.randint(51, 100),
+        ]
+
 
 class MA918(DoubleMACrossover):
     def __init__(self):
         super().__init__(9, 18)
+
+    @staticmethod
+    def generate_param():
+        return []
 
 
 class MA4918(Rule):
@@ -157,6 +194,10 @@ class MA4918(Rule):
             return Buy()
         else:
             return Hold()
+
+    @staticmethod
+    def generate_param():
+        return []
 
 
 class MACD(Rule):
@@ -186,6 +227,14 @@ class MACD(Rule):
 
     def _compute_EMA(self, ts, n):
         return ts.iloc[-n:].ewm(span=n).mean().iloc[-1]
+
+    @staticmethod
+    def generate_param():
+        r1 = np.random.randint(10, 30)
+        r2 = np.random.randint(10, 30)
+        if r1 == r2:
+            r1 += 1
+        return [min(r1, r2), max(r1, r2), np.random.uniform(-0.1, 0.1)]
 
 
 class MoneyFlowIndex(Rule):
@@ -231,6 +280,14 @@ class MoneyFlowIndex(Rule):
             MFI = 100 - 100 / (1 + money_ratio)
             return MFI
 
+    @staticmethod
+    def generate_param():
+        return [
+            np.random.randint(10, 30),
+            np.random.randint(1, 50),
+            np.random.randint(51, 100),
+        ]
+
 
 class CommodityChannelIndex(Rule):
     def __init__(
@@ -266,10 +323,19 @@ class CommodityChannelIndex(Rule):
         MD = typical_price.mad()
         return (p - SMA) / (MD * 0.015)
 
+    @staticmethod
+    def generate_param():
+        return [
+            np.random.randint(10, 30),
+            np.random.randint(3, 15),
+            np.random.randint(-200, -50),
+            np.random.randint(50, 200),
+        ]
+
 
 class StochasticRSI(Rule):
     def __init__(self, n: int = 14, buy_signal: float = 0.2, sell_signal: float = 0.8):
-        assert n > 1
+        assert n > 2
         assert buy_signal < sell_signal
         self.n = n
         self.buy_signal = buy_signal
@@ -289,7 +355,21 @@ class StochasticRSI(Rule):
         old_RSIs = [_compute_RSI(ts.iloc[:-i], self.n) for i in range(1, self.n)]
         min_RSI = min(old_RSIs)
         max_RSI = max(old_RSIs)
-        return (now_RSI - min_RSI) / (max_RSI - min_RSI)
+        if max_RSI == min_RSI:
+            if now_RSI > min_RSI:
+                return 1
+            else:
+                return 0
+        else:
+            return (now_RSI - min_RSI) / (max_RSI - min_RSI)
+
+    @staticmethod
+    def generate_param():
+        return [
+            np.random.randint(10, 30),
+            np.random.uniform(0, 0.5),
+            np.random.uniform(0.5, 1),
+        ]
 
 
 if __name__ == "__main__":

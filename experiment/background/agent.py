@@ -49,15 +49,15 @@ class GeneticAgent(Agent):
     def init_rules(self):
         raise NotImplementedError
 
-
-class GeneticSimpleAgent(GeneticAgent):
-    def init_rules(self):
-        self.rules = [rule() for rule in self.RULES]
-
     def decide(self, tdf):
         rule_decisions = np.array([rule.decide(tdf) for rule in self.rules])
         vote_decision = (rule_decisions * self.gene).sum()
         return make_decision(vote_decision)
+
+
+class GeneticSimpleAgent(GeneticAgent):
+    def init_rules(self):
+        self.rules = [rule() for rule in self.RULES]
 
 
 class GeneticBitAgent(GeneticSimpleAgent):
@@ -78,36 +78,21 @@ class GeneticRealAgent(GeneticSimpleAgent):
         super().__init__()
 
 
-# Problem in GeneticComplexAgent:
-# Hyperparameters have constraint, for example, in doubleMA, short_n < long_n.
-# Therefore we can't directly use random number for parameter genes
-# Ways to address:
-#   1. when initialize, loop until valid
-#       Problem: when mutate, invalid parameter genes could still be generated
-#   2. change the implementation of rules, for example make the doubleMA automatically switch
-#           short_n and long_n when it found short_n > long_n
-#       Problem: do not know if this is applicable in every rule
-#   3. create a bunch of "RuleParamInitializer/Mutator", ad-hoc-ly provide initialization/mutation
-#       This seems good.
+class GeneticComplexAgent(GeneticAgent):
+    def __init__(self, gene=None, param_gene=None):
+        if gene is None:
+            self.gene = np.random.random(len(self.RULES))
+        else:
+            self._init_with_gene(gene)
 
-# class GeneticComplexAgent(GeneticAgent):
-#     def __init__(self, gene=None):
-#         if gene is None:
-#             arr = np.random.random(len(self.RULES))
-#             self.gene = arr / arr.sum()
-#             self.param_gene = [
-#                 '''
-#                   Currently the N_PARAM is removed from the RULES,
-#                   whatever choice is implemented, this `rule.N_PARAM` should be gone
-#                 '''
-#                 list(np.random.randint(5, 100, rule.N_PARAM)) for rule in self.RULES
-#             ]
-#         else:
-#             self._init_with_gene(gene)
-#         super().__init__()
+        if param_gene is None:
+            self.param_gene = [rule.generate_param() for rule in self.RULES]
+        else:
+            self.param_gene = param_gene
+        super().__init__()
 
-#     def init_rules(self):
-#         self.rules = [rule(*gene) for rule, gene in zip(self.RULES, self.param_gene)]
+    def init_rules(self):
+        self.rules = [rule(*gene) for rule, gene in zip(self.RULES, self.param_gene)]
 
 
 class BenchmarkAgent(Agent, KnowsFullTdf):
