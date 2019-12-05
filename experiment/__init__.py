@@ -26,13 +26,13 @@ class Experiment(object):
         population = self.population
         result = []
         for i in range(epoch):
+            logger.info(f"Start epoch {i+1}/{epoch}.")
             evaluation = self.market.evaluate(population)
             best = max(evaluation)
             avg = np.mean(evaluation)
             result.append([best, avg])
             logger.info(f"Generation {i}'s best: {best}, average: {avg}")
 
-            logger.info(f"Start evolving generation {i+1}/{epoch}.")
             population = self.evolution.evolve(population, evaluation)
 
         self.population = population
@@ -57,8 +57,8 @@ class Experiment(object):
         assert hasattr(self, "history")
         self.history.plot()
         if hasattr(self, "test_max") and hasattr(self, "test_mean"):
-            plt.axhline(self.test_max, color="green")
-            plt.axhline(self.test_mean, color="burlywood")
+            plt.axhline(self.test_max, color="green", linestyle="--")
+            plt.axhline(self.test_mean, color="burlywood", linestyle="--")
         plt.xlabel("Epoch")
         plt.ylabel("Performance")
         if filename:
