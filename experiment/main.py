@@ -57,42 +57,45 @@ def complex_experiment_suite(n_population, evolution_params, epoch):
 
 if __name__ == "__main__":
 
-    bit_experiment_suite(20, [0.6, 0.75, 0.1], 10)
-    bit_experiment_suite(20, [0.5, 0.75, 0.1], 10)
-    bit_experiment_suite(20, [0.4, 0.75, 0.1], 10)
+    N = 15
+    EPOCH = 8
+    
+    bit_experiment_suite(N, [0.6, 0.75, 0.1], EPOCH)
+    bit_experiment_suite(N, [0.5, 0.75, 0.1], EPOCH)
+    bit_experiment_suite(N, [0.4, 0.75, 0.1], EPOCH)
 
-    bit_experiment_suite(20, [0.6, 0.5, 0.1], 10)
-    bit_experiment_suite(20, [0.6, 0.25, 0.1], 10)
+    bit_experiment_suite(N, [0.6, 0.5, 0.1], EPOCH)
+    bit_experiment_suite(N, [0.6, 0.25, 0.1], EPOCH)
 
-    bit_experiment_suite(20, [0.6, 0.75, 0.2], 10)
-    bit_experiment_suite(20, [0.6, 0.75, 0.3], 10)
+    bit_experiment_suite(N, [0.6, 0.75, 0.2], EPOCH)
+    bit_experiment_suite(N, [0.6, 0.75, 0.3], EPOCH)
 
-    bit_experiment_suite(20, [0.6, 0.75, 0.1, 0.1], 10)
-    bit_experiment_suite(20, [0.6, 0.75, 0.1, 0.2], 10)
+    bit_experiment_suite(N, [0.6, 0.75, 0.1, 0.1], EPOCH)
+    bit_experiment_suite(N, [0.6, 0.75, 0.1, 0.2], EPOCH)
 
-    real_experiment_suite(20, [0.6, 0.75, 0.1], 10)
-    real_experiment_suite(20, [0.5, 0.75, 0.1], 10)
-    real_experiment_suite(20, [0.4, 0.75, 0.1], 10)
+    real_experiment_suite(N, [0.6, 0.75, 0.1], EPOCH)
+    real_experiment_suite(N, [0.5, 0.75, 0.1], EPOCH)
+    real_experiment_suite(N, [0.4, 0.75, 0.1], EPOCH)
 
-    real_experiment_suite(20, [0.6, 0.5, 0.1], 10)
-    real_experiment_suite(20, [0.6, 0.25, 0.1], 10)
+    real_experiment_suite(N, [0.6, 0.5, 0.1], EPOCH)
+    real_experiment_suite(N, [0.6, 0.25, 0.1], EPOCH)
 
-    real_experiment_suite(20, [0.6, 0.75, 0.2], 10)
-    real_experiment_suite(20, [0.6, 0.75, 0.3], 10)
+    real_experiment_suite(N, [0.6, 0.75, 0.2], EPOCH)
+    real_experiment_suite(N, [0.6, 0.75, 0.3], EPOCH)
 
-    real_experiment_suite(20, [0.6, 0.75, 0.1, 0.1], 10)
-    real_experiment_suite(20, [0.6, 0.75, 0.1, 0.2], 10)
+    real_experiment_suite(N, [0.6, 0.75, 0.1, 0.1], EPOCH)
+    real_experiment_suite(N, [0.6, 0.75, 0.1, 0.2], EPOCH)
 
-    complex_experiment_suite(20, [0.6, 0.75, 0.1], 10)
-    complex_experiment_suite(20, [0.5, 0.75, 0.1], 10)
-    complex_experiment_suite(20, [0.4, 0.75, 0.1], 10)
+    complex_experiment_suite(N, [0.6, 0.75, 0.1], EPOCH)
+    complex_experiment_suite(N, [0.5, 0.75, 0.1], EPOCH)
+    complex_experiment_suite(N, [0.4, 0.75, 0.1], EPOCH)
 
-    complex_experiment_suite(20, [0.6, 0.5, 0.1], 10)
-    complex_experiment_suite(20, [0.6, 0.25, 0.1], 10)
+    complex_experiment_suite(N, [0.6, 0.5, 0.1], EPOCH)
+    complex_experiment_suite(N, [0.6, 0.25, 0.1], EPOCH)
 
-    complex_experiment_suite(20, [0.6, 0.75, 0.2], 10)
-    complex_experiment_suite(20, [0.6, 0.75, 0.3], 10)
+    complex_experiment_suite(N, [0.6, 0.75, 0.2], EPOCH)
+    complex_experiment_suite(N, [0.6, 0.75, 0.3], EPOCH)
 
-    complex_experiment_suite(20, [0.6, 0.75, 0.1, 0.1], 10)
-    complex_experiment_suite(20, [0.6, 0.75, 0.1, 0.2], 10)
+    complex_experiment_suite(N, [0.6, 0.75, 0.1, 0.1], EPOCH)
+    complex_experiment_suite(N, [0.6, 0.75, 0.1, 0.2], EPOCH)
 
