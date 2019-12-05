@@ -8,6 +8,7 @@ import pandas as pd
 from experiment.util.config import logger
 import matplotlib.pyplot as plt
 
+
 class Experiment(object):
     def __init__(self, population, evolution, market):
         self.population = population
@@ -15,7 +16,13 @@ class Experiment(object):
         self.market = market
 
     def train(self, epoch):
-        logger.info("Experiment start.")
+        logger.info("Experiment start. Parameters:")
+        logger.info(
+            f"Population: {len(self.population)} of {str(type(self.population[0]))}"
+        )
+        logger.info(
+            f"Evolution: {str(type(self.evolution))}, with params: {self.evolution.get_params_str()}"
+        )
         population = self.population
         result = []
         for i in range(epoch):
@@ -56,6 +63,7 @@ class Experiment(object):
         plt.ylabel("Performance")
         if filename:
             plt.savefig(filename)
+            plt.close()
         else:
             plt.show()
 
