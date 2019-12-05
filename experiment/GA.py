@@ -35,6 +35,15 @@ class Evolution(object):
         self.elitism_rate = elitism_rate
         self.mutation_bitwise_rate = mutation_bitwise_rate
 
+    def get_params_str(self):
+        return (
+            f"Survival: {self.survival_rate}, "
+            + f"Crossover: {self.crossover_rate}, "
+            + f"Mutation: {self.mutation_rate}, "
+            + f"Elitism: {self.elitism_rate}, "
+            + f"Mutation-bitwise: {self.mutation_bitwise_rate}"
+        )
+
     def evolve(self, population, evaluation):
         assert len(population) == len(evaluation)
         logger.info(f"Evolution started.")
