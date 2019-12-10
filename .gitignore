@@ -27,3 +27,5 @@ data/*.csv
 
 # python
 __pycache__/
+
+.Lutil-checkpoint/
