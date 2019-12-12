@@ -31,7 +31,9 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 
-\title{Introduction to Artificial Intelligence Writing 5}
+\usepackage[ruled, linesnumbered]{algorithm2e}
+
+\title{Building a Stock Market Trading Agent with Genetic Algorithm}
 \author{YiFan Li\\ZeYuan Yang}
 \date{\today}
 
@@ -45,6 +47,9 @@
 
 %-------%
 
+\begin{abstract}
+	TODO: abstract
+\end{abstract}
 
 \section{Introduction}
 
@@ -206,7 +211,7 @@ Several ``tournaments" among a few chromosomes chosen at random from the populat
 The winner of each tournament (the one with the best fitness) is selected for crossover.
 Comparing with the traditional approach of directly selecting the good ones from the whole population,
 it can improve gene diversity thus prevent GA from being trapped in local optimum
-\cite{a-note-on-boltzmann-tournament-selecttion}.
+\cite{a-note-on-boltzmann-tournament-selection}.
 
 Applying the fuzzy logic as well, Kuo, Ren Jie and his team \cite{an-intelligent-stock-trading-decision-support-system}
 further choose to combine genetic and neural networks.
@@ -283,6 +288,143 @@ but it still requires examination
 \cite{stock-timing-using-genetic-algorithms}.
 Our work will be based on the approach introduced above,
 try to address these two issues and hopefully find other insights.
+
+\section{Approach}
+
+\subsection{Problem Setting Specification}
+
+Similar to \cite{genetic-algorithms-for-predicting-the-egyptian-stock-market}
+and \cite{stock-timing-using-genetic-algorithms},
+we will setup our problem setting as follows:
+\begin{itemize}
+	\item Given a historical stock price time series in the past $n$ periods, $P_t=\left[p_{t-n}, p_{t-n+1}, \cdots, p_{t-1}\right]$,
+	      where $t$ represents the present,
+	\item and a set of $k$ trading rules suggesting ``buy", ``sell" or ``hold" action based on the time series\\
+	      $R=\{r_1, r_2, \cdots, r_k\}, \forall r_i(P_t) \rightarrow s_i \in \{\text{sell}, \text{buy}, \text{hold}\}$,
+	\item design an agent $A$ who can integrate all the rules to make a final decision\\
+	      $A(R(P_t)) \rightarrow d_t \in \{\text{sell}, \text{buy}, \text{hold}\}$,
+	\item that can generate profit in the following $m$ period,
+	      which can be calculated as $\sum \limits_{t=0}^{m} p_{t}^{\text{sell}} - p_{t}^{\text{buy}}$,\\
+	      $p_{t}^{\text{sell}} = \left\{
+		      \begin{array}{ll}
+			      p_t \quad & \text{if} A(R(P_t)) = \text{sell} \wedge A \text{ currently holds the stock} \\
+			      0 \quad   & \text{otherwise}
+		      \end{array}\right.,\\
+		      p_t^{\text{buy}} = \left\{
+		      \begin{array}{ll}
+			      p_t \quad & \text{if} A(R(P_t)) = \text{buy} \wedge A \text{ currently not holds the stock} \\
+			      0 \quad   & \text{otherwise}
+		      \end{array}
+		      \right.$
+\end{itemize}
+
+As examining only one stock may be not representative enough,
+we will conduct the experiment on five stocks and take their average result.
+Additionally, because the maximum possible benefit varies for different stock price time series,
+it is unwise to compare the absolute value of profit directly.
+The benchmark of our evaluation is an agent who can ``predict the future".
+It knows the whole time series and make decision based on it,
+$A'(P_m, t) \rightarrow d'_t$,
+which can be implemented with the following trivial algorithm.
+
+\begin{algorithm}[H]
+	\KwData{prices}
+	\KwData{today}
+	\SetKwData{prices}{prices}
+	\SetKwData{today}{today}
+	\KwResult{decision}
+
+	\uIf{$\prices[\today+1] > \prices[\today]$}{
+		\Return{buy}\;
+	}\uElseIf{$\prices[\today+1] < \prices[\today]$}{
+		\Return{sell}\;
+	}\Else{
+		\Return{hold}\;
+	}
+	\caption{Benchmark Agent}
+\end{algorithm}
+
+In all, the evaluation of the agent will be
+$
+\dfrac{\sum \limits_{i=1}^{5}
+\dfrac{
+    \operatorname{Profit}_i(\text{genetic agent})
+}{
+    \operatorname{Profit}_i(\text{benchmark agent})
+}}{5}$, where $i$ represents different stocks, and the goal is to maximize it.
+
+
+\subsection{Genetic Algorithm}
+
+\subsubsection{Chromosome Representation}
+
+In our experiment, each gene in the agent's chromosome will be a number
+\footnote{In the complex representation variant,
+a part of the gene will be a number.
+See section \ref{subsubsec-variants} for detail.}
+corresponding to one trading rule.
+It will be used as the weight to take average on the trading rules' decision.
+The decisions can be considered as:
+\begin{itemize}
+	\item Buy $\rightarrow$ 1
+	\item Sell $\rightarrow$ -1
+	\item Hold $\rightarrow$ 0
+\end{itemize}
+
+After that, a positive weighted average will be result in a Buy decision,
+while a negative one will lead to a Sell decision outputted by the agent.
+
+\subsubsection{Genetic Operators}
+
+Various implementations for genetic algorithm operators are proposed in previous works.
+For example, there are trivial highest-score selection and tournament
+method\cite{a-note-on-boltzmann-tournament-selection},
+single-point, k-point and uniform crossover\cite{genetic-algorithm-review-and-application}, etc.
+Therefore we considered it necessary to describe
+our implementation of the genetic operators explicitly.
+
+We applied the basic highest-score selection,
+which selects a percentage of agents with the highest score to go to the reproduction process.
+
+In the crossover phase, a percentage of agents who passed the selection will be chosen.
+They will act as parents, producing new agents, but themselves will not go to the next generation.
+The children and those who are not selected as parents will go to the mutation phase.
+When generating new agent, uniform crossover will run repeatedly,
+until the total number of agent is the same as original.
+Uniform crossover, to be more specific, means that each gene in the children's chromosome
+is chosen from either parent with equal probability.
+
+During mutation, a percentage of the agents will be chosen to mutate,
+the others will remain unchanged.
+Each gene in the chromosome of mutating agents will have a 50\% chance to be reset as random one.
+
+\subsubsection{Variants}\label{subsubsec-variants}
+
+Two variants are applied in our experiment, chromosome representation and elitism.
+Besides the bit (1 or 0) representation used in \cite{genetic-algorithms-for-predicting-the-egyptian-stock-market}
+and \cite{stock-timing-using-genetic-algorithms}
+
+
+
+\subsection{Other Technical Details}
+
+\subsubsection{Data Preparation}
+
+The open, high, low, close price and trading volume
+of the five randomly chosen stocks, CMS, MKC, MMP, THS and XEL,
+between 2016-01-04 and 2018-12-31 are pulled from \href{https://www.alphavantage.co/}{Alpha Vantage}.
+They will be used as our dataset.
+The data quality is good, therefore no further preprocessing is required.
+
+\subsubsection{Programming Details}
+
+We chose Python as the programming language it's simple.
+Its Pandas and Numpy packages also significantly simplify array and matrix computation.
+There are also various modules providing fundamental framework for genetic algorithm,
+however, we decide not to use them and build the genetic algorithm related modules from scratch,
+because we want to know the exact details of every single line of code
+in the genetic algorithm.
+
 
 
 \bibliographystyle{abbrv}
