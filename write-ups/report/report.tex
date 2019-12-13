@@ -15,6 +15,9 @@
 \setdescription{itemsep=0pt,partopsep=2pt,parsep=0pt ,topsep=2pt}
 
 \usepackage{graphicx}
+\usepackage{grffile}
+\graphicspath{{../../results/}}
+
 \usepackage{fontspec}
 
 \defaultfontfeatures{%
@@ -35,11 +38,40 @@
 
 \usepackage[ruled, linesnumbered]{algorithm2e}
 
+\usepackage{float}
+
+\usepackage{ifthen}
+\usepackage{subcaption}
+
+\newcommand{\threefigures}[7][]{
+\begin{figure}[H]
+	\centering
+		\begin{minipage}[t]{0.32\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{#2}%
+			\subcaption{#3}%
+		\end{minipage}
+		\begin{minipage}[t]{0.32\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{#4}%
+			\subcaption{#5}%
+		\end{minipage}
+		\begin{minipage}[t]{0.32\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{#6}%
+			\subcaption{#7}%
+		\end{minipage}
+		\ifthenelse{%
+			\equal{#1}{}%
+		}{}{%
+		\caption{#1}%
+		}%
+\end{figure}
+}
+
 \title{Building a Stock Market Trading Agent with Genetic Algorithm}
 \author{YiFan Li\\ZeYuan Yang}
 \date{\today}
-
-
 
 \begin{document}
 
@@ -92,9 +124,6 @@ with eligible trading rules and reasonable combination \cite{stock-market-predic
 Plenty of approaches has been examined and we will go through some of them in the literature review.
 Noticeably, the genetic algorithm is widely used in related researches.
 
-% for instance, neutral networks used by Kimoto et al \cite{stock-market-prediction-system-with-modular-neural-networks}.
-% Genetic algorithm is one of them as well.
-
 Genetic algorithm is an adaptive heuristic search method,
 inspired by the natural process of genetic evolution.
 It can quickly generate high-quality solutions to optimization problems, such as scheduling and shortest path,
@@ -105,35 +134,6 @@ by simulating the selection, crossover and mutation procedures in nature
 In our paper, we will apply the genetic algorithm to
 find the best combination of a set of trading rules, which can help with the buy and sell decisions.
 We will dig deeper into a more comprehensive and applicable solution based on the previous works.
-
-% Implementation details, could be useful in Section Method.
-
-% ---------------- %
-% We base on a historical stock price time series in the past \emph{n} periods
-% to build an agent to make a final decision of buying and selling.
-% % TODO: how many
-% More than 10 different financial rules and historical prices information
-% in the past three years of 5 stocks are included by us to build our experiment.
-
-% Our experiment is designed to predict the stock price as a search problem.
-% Every rule is assigned a weight.
-% All these weights constitute a vector, a new, combination rule to predict the prices.
-% Each vector is considered as a chromosome.
-% Running the genetic algorithm on this, we program to find the optimal prediction rule for stocks.
-% The final selected agent is considered to have the capacity to make the most optimal buying and selling decisions.
-
-% The experiment is conducted in two phases.
-% We divide our dataset into two subsets, a train dataset, and a test dataset.
-% In the first stage, we will only use the train dataset to find the hyperparameters that lead to the best performance here.
-% In the second stage, the genetic algorithm will be run on the test dataset to measure performance.
-% By this approach, we not only find the optimal solution but also avoid the over-fitting problem.
-
-% In the following section,
-% we describe what other researchers have done regarding the prediction in the stock market,
-% especially using a genetic algorithm.
-
-% ---------------- %
-
 
 \section{Related Work}
 
@@ -434,7 +434,7 @@ With this technique, it can be guaranteed that the best agent will only improve 
 
 The possible configurations in our experiment are:
 \begin{itemize}
-	\item selection rate
+	\item survival rate
 	\item crossover rate
 	\item mutation rate
 	\item elitism rate
@@ -445,13 +445,13 @@ We will try different combination of these parameters/choices and compare their 
 Some fixed hyper-parameters are:
 \begin{itemize}
 	\item population: 15
-	\item total epoch: 8
+	\item total training epoch: 8
 \end{itemize}
 
-We will use the data from 2016-03-01 to 2017-12-29 as the train dataset,
-and use the data from 2018-01-02 to 2018-12-28 as the test dataset.
-The genetic optimization will only run on the train set and after 8 generations,
-the final population will be applied on the test set to evaluate their performance.
+We will split the data into two parts, from 2016--03--01\textasciitilde 2017--12--29 as the train dataset,
+and use the data from 2018--01--02\textasciitilde 2018--12--28 as the test dataset.
+The genetic optimization will only run on the train set,
+and the final population will be applied on the test set to evaluate their performance.
 This idea is borrowed from machine learning,
 that a model with high performance may not be accurate on unseen data.
 We can test the final agent's ability to generalize with this approach.
@@ -462,13 +462,13 @@ We can test the final agent's ability to generalize with this approach.
 
 The open, high, low, close price and trading volume
 of the five randomly chosen stocks, CMS, MKC, MMP, THS and XEL,
-between 2016-01-04 and 2018-12-31 are pulled from \href{https://www.alphavantage.co/}{Alpha Vantage}.
+between 2016--01--04 and 2018--12--31 are pulled from \href{https://www.alphavantage.co/}{Alpha Vantage}.
 They will be used as our dataset.
 The data quality is good, therefore no further preprocessing is required.
 
 \subsubsection{Programming Language and Packages}
 
-We chose Python as the programming language it's simple.
+We chose Python as the programming language it is simple.
 Its Pandas and Numpy packages also significantly simplify array and matrix computation.
 There are also various modules providing fundamental framework for genetic algorithm,
 however, we decide not to use them and build the genetic algorithm related modules from scratch,
@@ -479,6 +479,344 @@ in the genetic algorithm.
 
 As the financial trading rules are verbose to explain and the details are actually off-topic,
 we will specify them in section \ref{section-appendix}, appendix.
+
+\section{Results and Analysis}
+
+We tracked the performance of the best agent and
+the population average of each generation in the training phase.
+The best and average performance of the final generation in the testing phase are also recorded.
+In the following several sections,
+we will interpret the effect of the genetic operators and variants
+by looking at the figures which depicts the training process and the testing result.
+The lines in the figures are explained as follows:
+\begin{itemize}
+	\item Blue line: best agent in each generation (epoch), performance on train set
+	\item Orange line: population average in each generation (epoch), performance on train set
+	\item Green dashed line: best agent in the final population, performance on test set
+	\item Orange dashed line: average of the final population, performance on train set
+\end{itemize}
+
+Although all the information is demonstrated,
+we would like to focus on the training performance in the following sections first.
+Comments on the testing performance will be made in section \ref{subsection-generalization}.
+
+\subsection{Survival rate}
+
+Survival rate is the percentage of well-performed agents
+who can go to the reproduction procedures.
+The effect of survival rate is analyzed in this section by controlling the following parameters:
+\begin{itemize}
+	\item crossover rate: 0.75
+	\item mutation rate: 0.1
+	\item elitism: off
+\end{itemize}
+
+The following figure
+shows the experiment result of applying different survival rate
+in the bit representation.
+
+\threefigures[Bit representation]
+{bit-15-agent-param-0.4-0.75-0.1.png}
+{Survival rate: 0.4}
+{bit-15-agent-param-0.5-0.75-0.1.png}
+{Survival rate: 0.5}
+{bit-15-agent-param-0.6-0.75-0.1.png}
+{Survival rate: 0.6}
+
+All the best performers reached a performance of about 0.08 in about 5 generations.
+The population average converge to the best agent gradually and is fairly close in the final generation.
+Such convergence happens somewhat faster when survival rate is 0.4 but it is not significant.
+In all, no prominent difference can be identified in the figures.
+
+However, the situation differs a lot in the float and tuple representation, as shown below.
+
+\threefigures[Float representation]
+{real-15-agent-param-0.4-0.75-0.1.png}
+{Survival rate: 0.4}
+{real-15-agent-param-0.5-0.75-0.1.png}
+{Survival rate: 0.5}
+{real-15-agent-param-0.6-0.75-0.1.png}
+{Survival rate: 0.6}
+
+\threefigures[Tuple representation]
+{complex-15-agent-param-0.4-0.75-0.1.png}
+{Survival rate: 0.4}
+{complex-15-agent-param-0.5-0.75-0.1.png}
+{Survival rate: 0.5}
+{complex-15-agent-param-0.6-0.75-0.1.png}
+{Survival rate: 0.6}
+
+When survival rate is 0.4, the population average converges to the best agent,
+and is almost the same in the final population.
+Such convergence means that the genetic diversity of the population is really low,
+all agents are likely to have highly similar chromosomes.
+However, when survival rate is 0.5, the tuple representation,
+maintains a good gene diversity even in the final epoch.
+The same goes for a 0.6 survival rate for both float and tuple representation.
+
+Although a higher survival rate improves the diversity of the gene pool,
+it set back the efficiency of optimization.
+When survival rate is 0.6 in float representation,
+hardly does the best agent perform better.
+The best agent in tuple representation even perform worse than the initial best,
+making the whole genetic algorithm approach almost meaningless.
+
+\subsection{Crossover Rate}
+
+Crossover rate is the percentage of agents who are used to generate new agents.
+The effect of crossover rate is analyzed in this section by controlling the following parameters:
+\begin{itemize}
+	\item survival rate: 0.6
+	\item mutation rate: 0.1
+	\item elitism: off
+\end{itemize}
+
+The following figure demonstrate the experiment results using the bit chromosome representation.
+
+\threefigures[Bit representation]
+{bit-15-agent-param-0.6-0.25-0.1.png}
+{Crossover rate: 0.25}
+{bit-15-agent-param-0.6-0.5-0.1.png}
+{Crossover rate: 0.5}
+{bit-15-agent-param-0.6-0.75-0.1.png}
+{Crossover rate: 0.75}
+
+All the average performance grows fast and smoothly,
+but there are a lot of horizontal lines in the performance of the best agents.
+Changing the crossover rate does not help changing this situation in bit representation,
+but it makes a slight difference in float and tuple representation as shown by the following figures.
+
+\threefigures[Float representation]
+{real-15-agent-param-0.6-0.25-0.1.png}
+{Crossover rate: 0.25}
+{real-15-agent-param-0.6-0.5-0.1.png}
+{Crossover rate: 0.5}
+{real-15-agent-param-0.6-0.75-0.1.png}
+{Crossover rate: 0.75}
+
+\threefigures[Tuple representation]
+{complex-15-agent-param-0.6-0.25-0.1.png}
+{Crossover rate: 0.25}
+{complex-15-agent-param-0.6-0.5-0.1.png}
+{Crossover rate: 0.5}
+{complex-15-agent-param-0.6-0.75-0.1.png}
+{Crossover rate: 0.75}
+
+When the crossover rate is low, there are a lot of horizontal lines for the best agent as well.
+However, with a crossover rate of 0.75, the best agent gets updated in almost every generations,
+even though the improvement is not significant, if not deterioration.
+A high crossover rate also prevent the population average from improving fast.
+
+In all, crossover rate does not have a clear pattern of affecting the genetic optimization in our problem.
+It helps ensure the updating of the best agent in each generation,
+but whether such update is positive or negative cannot be guaranteed.
+
+\subsection{Mutation Rate}
+
+Mutation rate is the percentage of agents whose genes will be randomly modified.
+The effect of mutation rate is analyzed in this section by controlling the following parameters:
+\begin{itemize}
+	\item survival rate: 0.6
+	\item crossover rate: 0.75
+	\item elitism: off
+\end{itemize}
+
+The following figure demonstrate the experiment results using the bit and float chromosome representation.
+
+\threefigures[Bit representation]
+{bit-15-agent-param-0.6-0.75-0.1.png}
+{Mutation rate: 0.1}
+{bit-15-agent-param-0.6-0.75-0.2.png}
+{Mutation rate: 0.2}
+{bit-15-agent-param-0.6-0.75-0.3.png}
+{Mutation rate: 0.3}
+
+\threefigures[Float representation]
+{real-15-agent-param-0.6-0.75-0.1.png}
+{Mutation rate: 0.1}
+{real-15-agent-param-0.6-0.75-0.2.png}
+{Mutation rate: 0.2}
+{real-15-agent-param-0.6-0.75-0.3.png}
+{Mutation rate: 0.3}
+
+When the mutation rate is low, the best performance and the average performance of both representations
+are all monotonically increasing.
+However, when the mutation rate is higher, the performance starts to fluctuate.
+A mutation rate of 0.3 in float representation even cause the best agent's performance to deteriorate.
+
+Such pattern of fluctuation seems to be reversed in the tuple representation, see the figure below.
+
+\threefigures[Tuple representation]
+{complex-15-agent-param-0.6-0.75-0.1.png}
+{Mutation rate: 0.1}
+{complex-15-agent-param-0.6-0.75-0.2.png}
+{Mutation rate: 0.2}
+{complex-15-agent-param-0.6-0.75-0.3.png}
+{Mutation rate: 0.3}
+
+With a low mutation rate, the fluctuation is more severe than that with a high mutation rate.
+It can be observed that with a mutation rate of 0.3,
+the average of population performance has a stable monotonic increasing trend.
+
+\subsection{Elitism}
+
+Elitism ensures a percentage of best agents go to the next generation unmodified.
+The effect of elitism is analyzed in this section by controlling the following parameters:
+\begin{itemize}
+	\item survival rate: 0.6
+	\item crossover rate: 0.75
+	\item mutation rate: 0.1
+\end{itemize}
+
+The following figure demonstrates the experiment results using the bit representation.
+
+\threefigures[Bit representation]
+{bit-15-agent-param-0.6-0.75-0.1.png}
+{Elitism rate: 0}
+{bit-15-agent-param-0.6-0.75-0.1-0.1.png}
+{Elitism rate: 0.1}
+{bit-15-agent-param-0.6-0.75-0.1-0.2.png}
+{Elitism rate: 0.2}
+
+There is no significant difference between different elitism rate.
+Even without the elitism, the best/average performance are both monotonically increasing.
+And in the final generation, the performance of best agent and population average
+are fairly close.
+
+The following figure demonstrates the result with the float representation.
+
+\threefigures[Float representation]
+{real-15-agent-param-0.6-0.75-0.1.png}
+{Elitism rate: 0}
+{real-15-agent-param-0.6-0.75-0.1-0.1.png}
+{Elitism rate: 0.1}
+{real-15-agent-param-0.6-0.75-0.1-0.2.png}
+{Elitism rate: 0.2}
+
+With a high elitism rate of 0.2, the average performance quickly converges to the best performance.
+It shows that elitism could decrease the gene diversity.
+However, this pattern is not observed in the tuple representation.
+
+\threefigures[Tuple representation]
+{complex-15-agent-param-0.6-0.75-0.1.png}
+{Elitism rate: 0}
+{complex-15-agent-param-0.6-0.75-0.1-0.1.png}
+{Elitism rate: 0.1}
+{complex-15-agent-param-0.6-0.75-0.1-0.2.png}
+{Elitism rate: 0.2}
+
+The divergence of population average and best agent's performance seems to be not
+accelerated by the increasing elitism rate.
+On the other hand, the fluctuation of performance without elitism no longer exists
+with elitism adopted, which is a trivial result of the concept of elitism itself.
+
+\subsection{Chromosome Representation}
+
+The figures listed in the previous sections can be used to
+compare the three chromosome representations we implemented.
+Therefore, we will not display them here again.
+
+The bit representation has only a limited possible genes.
+The search space of float representation, however, is infinite.
+The tuple representation is even larger than that of float representation,
+and it dropped the support of the domain knowledge.
+The the underlying rules no longer use the generally accepted parameters,
+instead, the genetic algorithm is in charge of optimizing them so that they
+can ideally fit the current stock price series even better.
+
+Such difference is the reason why the same genetic algorithm parameters show different patterns.
+With a limited search space, the bit representation itself tends to
+have a undiversified gene pool.
+Smaller survival rate and larger mutation rate will help introducing diversity in the gene pool,
+hence improve the overall performance.
+On the contrary, the float and tuple representation are more unstable.
+Excessively aggressive crossover and mutation will deteriorate the optimization by disrupting the
+survival of high quality genes.
+A moderate elitism rate, on the other hand, will protect the good genes therefore improving the
+result of genetic algorithm.
+The 0.1 elitism rate of tuple representation most clearly demonstrate that.
+
+Another interesting phenomenon of different representations is the final training best and average.
+The following table listed the three configurations that results in the best agents,
+and the three configurations that results in the worst agents in the training phase.
+
+\begin{table}[H]
+	\centerline{
+	\begin{tabular}{ccccc|cc}
+	Representation & Survival & Crossover & Mutation & Elitism & Training Best & Training Avg \\\hline
+	tuple          & 0.5      & 0.75      & 0.1      &         & 0.09          & 0.07         \\
+	tuple          & 0.6      & 0.75      & 0.1      & 0.2     & 0.088         & 0.072        \\
+	tuple          & 0.6      & 0.75      & 0.1      & 0.1     & 0.086         & 0.069        \\\hline
+	bit            & 0.6      & 0.5       & 0.1      &         & 0.057         & 0.048        \\
+	tuple          & 0.6      & 0.75      & 0.3      &         & 0.057         & 0.031        \\
+	tuple          & 0.6      & 0.75      & 0.1      &         & 0.052         & 0.04
+	\end{tabular}}
+	\caption{Top and Bottom 3 Configurations for the Training Best}
+\end{table}
+
+Interestingly, tuple chromosome dominates the top three,
+while two of the bottom three are also tuple chromosomes.
+As mentioned before, the tuple representation has the most flexibility
+for fitting the characteristic of a certain stock price time series.
+On the other hand, if it stuck in a local optimum, or the gene pool is disrupted by the aggressive mutation,
+or not enough number of epochs are conducted,
+the flawed trading rule parameters will prevent the rules from outputting an effective decision.
+Therefore the performance of the agent is certainly limited.
+
+\subsection{Generalization}\label{subsection-generalization}
+
+In the previous figures, the testing performance in each experiment is also depicted.
+The relationship between them and the training performance can be more clearly identified
+by plotting them on a scatter plot.
+
+\begin{figure}[H]
+	\centering
+		\begin{minipage}[t]{0.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{best.png}
+			\subcaption{Training and Testing Best}
+		\end{minipage}
+		\begin{minipage}[t]{0.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{avg.png}
+			\subcaption{Training and Testing Average}
+		\end{minipage}
+		\caption{Training and Testing Results}
+\end{figure}
+
+Both best and average measurements show such a pattern,
+that as the training performance improves,
+the testing performance will increase firstly then decrease.
+It corresponds to the underfitting--optimum--overfitting routine in a lot of machine learning problems.
+Blindly pursue a better performance on the train set does not necessarily leads to
+a higher profit in the future.
+Finding appropriate configuration for the genetic algorithm is critical to building
+a successful trading agent that can be put into the real world.
+
+The differences between the chromosome representations once again shows interesting pattern
+in this visualization.
+Those having the highest test scores are all float represented agents.
+The limitation of flexibility of bit representation constrains its performance
+so it can hardly be the best.
+On the other hand, although some tuple represented agents can have incredible training performance,
+they tend to perform poorly in the test.
+Its abandoning the benefit of domain knowledge and the overfitting leads to such result.
+The exact configuration of the top 3 testing results are listed in the following table.
+
+\begin{table}[H]
+	\centerline{
+	\begin{tabular}{ccccc|cc}
+	Representation & Survival & Crossover & Mutation & Elitism & Testing Best & Testing Avg \\\hline
+	float          & 0.6      & 0.75      & 0.1      &         & 0.12         & 0.084       \\
+	float          & 0.6      & 0.75      & 0.1      & 0.1     & 0.12         & 0.082       \\
+	bit            & 0.6      & 0.75      & 0.3      &         & 0.098        & 0.043
+	\end{tabular}
+	}
+	\caption{Top 3 Configurations for the Testing Best}
+\end{table}
+
+
+\section{Conclusion}
 
 \section{Appendix: Financial Rules}\label{section-appendix}
 
