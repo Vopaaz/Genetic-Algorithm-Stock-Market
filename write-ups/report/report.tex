@@ -900,7 +900,78 @@ ZeYuan Yang:
 
 \section{Appendix: Financial Rules}\label{section-appendix-financial-rules}
 
-TODO: Financial rules
+\begin{itemize}
+
+\item Single MA Crossover
+
+\emph{A buy signal is triggered when the Clossing Price Crosses the 28 moveing average to the Upside.}
+
+\emph{A sell signal is triggered when the Clossing Price Crosses the moveing average to the Downside.}
+\cite{genetic-algorithms-for-predicting-the-egyptian-stock-market}
+
+\item Double MA Crossover
+
+\emph{MA1 = 25 days}
+
+\emph{MA2 = 50 days}
+
+\emph{A buy signal is triggered when the faster MA1 crosses the slower MA2 to the Upside.}
+
+\emph{A sell signal when the faster MA1 crosses the slower MA2 to the Downside.}
+\cite{genetic-algorithms-for-predicting-the-egyptian-stock-market}
+
+\item RSI (relative strength index)
+
+\emph{RS = (An average of upward price movement) / (An average of downward price movement)}
+
+\emph{RSI = 100 - 100 / (1 + RS)} 
+\cite{stock-market-prediction-model-using-TPWS}
+
+\item Stochastic Oscillator
+
+\emph{\% k = (Today’s Closing price-lowest low in \% k periods) * 100 / (Highest high in \% k periods-lowest low in \% k periods)}
+
+\emph{\% D= A moving average of \%K is then calculated using the number of time periods specified in the \%D Periods}
+
+\emph{\%k} and \emph{\%D} are two lines Stochastic Oscillator displayed. 
+\cite{stock-market-prediction-model-using-TPWS}
+
+\item MA 918
+
+\emph{A buy signal is triggered when the 9 MA crosses the 18 MA to the Upside.}
+
+\emph{A sell signal is triggered when the 9 MA crosses the 18 MA to the Downside.}
+\cite{stock-market-prediction-model-using-TPWS}
+
+\item MA 4918
+
+\emph{A buy signal is triggered when the 4 MA crosses the 9 MA to the Upside and the 9 MA crosses the 18 MA to the Upside.}
+
+\emph{A sell signal is triggered when the 9 MA crosses the 18 MA to the Downside.}
+\cite{stock-market-prediction-model-using-TPWS}
+
+\item MACD 
+
+\emph{MACD = 7 day Exponential Moving Average - 13 day Exponential Moving Average}
+\cite{stock-market-prediction-model-using-TPWS}
+
+\item MFI (money flow index)
+
+\emph{Money Ratio = Positive Money Flow / Negative Money Flow}
+
+\emph{MFI = 100 - 100 / (1 + MR)}
+\cite{stock-market-prediction-model-using-TPWS}
+
+\item CCI (commodity channel index)
+
+\emph{Typical Price = (high + low + close) / 3}
+
+\emph{CCI = (Today's Typical Price - Today's 18th period moving average) / (0.015 * Step 3' value)}
+\cite{stock-market-prediction-model-using-TPWS}
+
+\item Stochastic RSI
+
+\end{itemize}
 
 
 
