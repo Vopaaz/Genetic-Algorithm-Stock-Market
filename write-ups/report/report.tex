@@ -82,7 +82,20 @@
 %-------%
 
 \begin{abstract}
-	TODO: abstract
+
+Using algorithm to help financial market traders has been a trend in recent years.
+Genetic algorithm is one of the approach to built an agent
+which can suggest a buying, selling or holding decisions.
+In our paper, we explored different parameter for genetic algorithms,
+including survival rate, crossover rate, mutation rate.
+Two variants, elitism and chromosome representation are also examined.
+We ran the experiment on 5 stock price time series from 2016 to 2018 and compare the results.
+It is found that the chromosome representation has a critical effect to the result of optimization.
+The most flexible one can achieve best performance on the training dataset,
+while the float representation which combines the flexibility and domain knowledge
+stand out on the testing dataset.
+
+
 \end{abstract}
 
 \section{Introduction}
@@ -478,7 +491,7 @@ in the genetic algorithm.
 \subsubsection{Trading Rules Specification}
 
 As the financial trading rules are verbose to explain and the details are actually off-topic,
-we will specify them in section \ref{section-appendix}, appendix.
+we will specify them in section \ref{section-appendix-financial-rules}, appendix.
 
 \section{Results and Analysis}
 
@@ -765,9 +778,9 @@ Therefore the performance of the agent is certainly limited.
 
 \subsection{Generalization}\label{subsection-generalization}
 
-In the previous figures, the testing performance in each experiment is also depicted.
-The relationship between them and the training performance can be more clearly identified
-by plotting them on a scatter plot.
+In the previous figures, the testing performance in each experiment is depicted.
+To get a more clear view about their relationship with the training performance,
+we can plot all experiment results on a scatter plot as follows.
 
 \begin{figure}[H]
 	\centering
@@ -816,14 +829,79 @@ The exact configuration of the top 3 testing results are listed in the following
 \end{table}
 
 
-\section{Conclusion}
+\section{Conclusion and Future Work}
 
-\section{Appendix: Financial Rules}\label{section-appendix}
+In this research, we successfully used genetic algorithm to design a trading agent on stock market.
+Besides traditional parameters configuration, we also explored elitism and complex chromosome representation
+and examined their effect.
+The best agent, which can achieve about 12\% of the theoretically possible revenue on the test market,
+is derived with the following genetic algorithm configuration:
+\begin{multicols}{2}
+\begin{itemize}
+	\item Representation: float
+	\item Survival rate: 0.6
+	\item Crossover rate: 0.75
+	\item Mutation rate: 0.1
+	\item Elitism: off
+	\item Training epoch: 8
+\end{itemize}
+\end{multicols}
 
-TODO: Financial rules
+We found in the exploration that chromosome representation makes a huge difference.
+
+Firstly, the same survival/crossover/mutation rate and elitism configuration have
+different effects on different representations.
+With tuple representation, where the search space is extremely large,
+using a high mutation rate or survival rate is likely to cause the best agent's performance to fluctuate
+and even stop improving.
+Elitism works well for mitigate this problem.
+On the contrary, the population of simple bit chromosomes has a tendency to be homogenized.
+Higher mutation rate and survival rate is helpful to maintain the gene diversity.
+
+Secondly, the chromosome representation dominantly decides the final outcome of the optimization.
+The most flexible tuple representation can achieve the highest score on the training dataset.
+Nevertheless, the overfitting problem causes a undesirable result on the testing dataset.
+The float representation combined the financial domain knowledge and the flexibility,
+which turn out to perform good enough on the training dataset and the best on testing dataset.
+
+Some variants of genetic algorithm are not implemented in our research,
+such as adaptive GA and parallel implementation.
+Other machine learning techniques, such as support vector machine and neural networks
+could be combined to see if they can achieve a better result as well.
+Moreover, on stock market, there are also other problems such as portfolio management and selection,
+applying genetic algorithm on that field could be another interesting topic.
+These are the possible further directions based on our works.
+
+
+\section{Contribution}
+
+YiFan Li:
+
+\begin{itemize}
+	\item Read 40\% of the previous literatures
+	\item Write all experiment code
+	\item Refine \textit{Introduction} and \textit{Related Work}
+	\item Write \textit{Abstract, Approach, Results and Analysis, Conclusion, Further Work}
+	\item Coordinate works and progress
+\end{itemize}
+
+\noindent
+ZeYuan Yang:
+
+\begin{itemize}
+	\item Read 60\% of the previous literatures
+	\item Write first draft of \textit{Introduction} and \textit{Related Work}
+	\item Write \textit{Appendix: Financial Rules}
+\end{itemize}
 
 \bibliographystyle{abbrv}
 \bibliography{report}
+
+
+\section{Appendix: Financial Rules}\label{section-appendix-financial-rules}
+
+TODO: Financial rules
+
 
 
 %-------%
