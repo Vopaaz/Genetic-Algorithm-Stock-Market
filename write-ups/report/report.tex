@@ -900,80 +900,188 @@ ZeYuan Yang:
 
 \section{Appendix: Financial Rules}\label{section-appendix-financial-rules}
 
+
+\subsection{Single MA Crossover}
+
+\setlength{\parindent}{0pt}
+
+Parameters\cite{genetic-algorithms-for-predicting-the-egyptian-stock-market}:
 \begin{itemize}
-
-\item Single MA Crossover
-
-\emph{A buy signal is triggered when the Closing Price crosses the 28 moveing average to the Upside.}
-
-\emph{A sell signal is triggered when the Closing Price crosses the moveing average to the Downside.}
-\cite{genetic-algorithms-for-predicting-the-egyptian-stock-market}
-
-\item Double MA Crossover
-
-\emph{MA1 = 25 days}
-
-\emph{MA2 = 50 days}
-
-\emph{A buy signal is triggered when the faster MA1 crosses the slower MA2 to the Upside.}
-
-\emph{A sell signal when the faster MA1 crosses the slower MA2 to the Downside.}
-\cite{genetic-algorithms-for-predicting-the-egyptian-stock-market}
-
-\item RSI (relative strength index)
-
-\emph{RS = (An average of upward price movement) / (An average of downward price movement)}
-
-\emph{RSI = 100 - 100 / (1 + RS)} 
-\cite{stock-market-prediction-model-using-TPWS}
-
-\item Stochastic Oscillator
-
-\emph{\%K = (Today’s Closing price-lowest low in \%K periods) * 100 / (Highest high in \%K periods-lowest low in \%K periods)}
-
-\emph{\%D= A moving average of \%K is then calculated using the number of time periods specified in the \%D Periods}
-
-\emph{\%K} and \emph{\%D} are two lines Stochastic Oscillator displayed. 
-\cite{stock-market-prediction-model-using-TPWS}
-
-\item MA 918
-
-\emph{A buy signal is triggered when the 9 MA crosses the 18 MA to the Upside.}
-
-\emph{A sell signal is triggered when the 9 MA crosses the 18 MA to the Downside.}
-\cite{genetic-algorithms-for-predicting-the-egyptian-stock-market}
-
-\item MA 4918
-
-\emph{A buy signal is triggered when the 4 MA crosses the 9 MA to the Upside and the 9 MA crosses the 18 MA to the Upside.}
-
-\emph{A sell signal is triggered when the 9 MA crosses the 18 MA to the Downside.}
-\cite{genetic-algorithms-for-predicting-the-egyptian-stock-market}
-
-\item MACD 
-
-\emph{MACD = 7 day Exponential Moving Average - 13 day Exponential Moving Average}
-\cite{stock-market-prediction-model-using-TPWS}
-
-\item MFI (money flow index)
-
-\emph{Money Ratio = Positive Money Flow / Negative Money Flow}
-
-\emph{MFI = 100 - 100 / (1 + MR)}
-\cite{stock-market-prediction-model-using-TPWS}
-
-\item CCI (commodity channel index)
-
-\emph{Typical Price = (high + low + close) / 3}
-
-\emph{CCI = (Today's Typical Price - Today's 18th period moving average) / (0.015 * average of absolute value of (each of 18 period day's typical price - 18th day's simple moving average))}
-\cite{stock-market-prediction-model-using-TPWS}
-
-\item Stochastic RSI
-
+    \item $n$: days of moving average, default 28
 \end{itemize}
 
+Decision trigger:
+\begin{description}
+    \item[Buy] the closing price crosses the $n$-day moving average to the upside
+    \item[Sell] the closing price crosses the $n$-day moving average to the downside
+\end{description}
 
+\subsection{Double MA Crossover}
+
+Parameters\cite{genetic-algorithms-for-predicting-the-egyptian-stock-market}:
+\begin{itemize}
+    \item $n_1$: days of short-term moving average, default 25
+    \item $n_2$: days of long-term moving average, default 50
+\end{itemize}
+
+Decision trigger:
+\begin{description}
+    \item[Buy] the short-term moving average crosses the long-term moving average to the upside
+    \item[Sell] the short-term moving average crosses the long-term moving average to the downside
+\end{description}
+
+
+\subsection{RSI (relative strength index)}
+
+Parameters\cite{stock-market-prediction-model-using-TPWS}:
+\begin{itemize}
+    \item $n$: days to consider, default 14
+    \item $\text{sig}_{\text{buy}}$: signal to buy, default 20
+    \item $\text{sig}_{\text{sell}}$: signal to sell, default 80
+\end{itemize}
+
+Index calculation:
+\begin{itemize}
+    \item RS = (Average of upward price movement in $n$ days) / (Average of downward price movement in $n$ days)
+    \item RSI = 100 - 100 / (1 + RS)
+\end{itemize}
+
+Decision trigger:
+\begin{description}
+    \item[Buy] RSI < $\text{sig}_{\text{buy}}$
+    \item[Sell] RSI > $\text{sig}_{\text{sell}}$
+\end{description}
+
+
+\subsection{Stochastic Oscillator}
+
+Parameters\cite{stock-market-prediction-model-using-TPWS}:
+\begin{itemize}
+    \item $n$: days to consider, default 14
+    \item $\text{sig}_{\text{buy}}$: signal to buy, default 20
+    \item $\text{sig}_{\text{sell}}$: signal to sell, default 80
+\end{itemize}
+
+Index calculation:
+\begin{itemize}
+    \item C = today's close price
+    \item H = highest high price in $n$ days
+    \item L = lowest low price in $n$ days
+    \item K = (C - L) / (H - L) * 100
+\end{itemize}
+
+Decision trigger:
+\begin{description}
+    \item[Buy] K < $\text{sig}_{\text{buy}}$
+    \item[Sell] K > $\text{sig}_{\text{sell}}$
+\end{description}
+
+\subsection{MA 918}
+
+Simply a Double MA Crossover with fixed parameters 9 and 18\cite{genetic-algorithms-for-predicting-the-egyptian-stock-market}.
+
+\subsection{MA 4918}
+
+Two Double MA Crossover with fixed parameters (4, 9) and (9, 18)\cite{genetic-algorithms-for-predicting-the-egyptian-stock-market}.
+
+Decision trigger:
+\begin{description}
+    \item[Buy] Both inner Double MA Crossover suggests buy
+    \item[Sell] Both inner Double MA Crossover suggests sell
+\end{description}
+
+\subsection{MACD}
+
+Parameters\cite{stock-market-prediction-model-using-TPWS}:
+\begin{itemize}
+    \item $n_1$: days of short-term exponential moving average, default 12
+    \item $n_2$: days of long-term exponential moving average, default 26
+    \item $\text{sig}$: signal threshold, default 0
+\end{itemize}
+
+Index calculation:
+\begin{itemize}
+    \item $\text{EMA}_{\text{short}}^{\text{yesterday}}$: short-term exponential moving average starting from 2 days ago
+    \item $\text{EMA}_{\text{short}}^{\text{today}}$: short-term exponential moving average starting from yesterday
+    \item $\text{EMA}_{\text{long}}^{\text{yesterday}}$: long-term exponential moving average starting from 2 days ago
+    \item $\text{EMA}_{\text{long}}^{\text{today}}$: long-term exponential moving average starting from yesterday
+    \item $\text{MACD}^{\text{today}}$: $\text{EMA}_{\text{short}}^{\text{today}} - \text{EMA}_{\text{long}}^{\text{today}}$
+    \item $\text{MACD}^{\text{yesterday}}$: $\text{EMA}_{\text{short}}^{\text{yesterday}} - \text{EMA}_{\text{long}}^{\text{yesterday}}$
+\end{itemize}
+
+Decision trigger:
+\begin{description}
+    \item[Buy] $\text{MACD}^{\text{yesterday}} < \text{sig} \land \text{MACD}^{\text{today}} > \text{sig}$
+    \item[Sell] $\text{MACD}^{\text{yesterday}} > \text{sig} \land \text{MACD}^{\text{today}} < \text{sig}$
+\end{description}
+
+
+\subsection{Money Flow Index}
+
+Parameters\cite{stock-market-prediction-model-using-TPWS}:
+\begin{itemize}
+    \item $n$: days to consider, default 14
+    \item $\text{sig}_{\text{buy}}$: signal to buy, default 10
+    \item $\text{sig}_{\text{sell}}$: signal to sell, default 90
+\end{itemize}
+
+Index calculation:
+\begin{itemize}
+    \item $\text{MR}$: Positive Money Flow / Negative Money Flow in $n$ days starting from yesterday
+    \item $\text{MFI}$: 100 - 100 / (1 + $\text{MR}$)
+\end{itemize}
+
+Decision trigger:
+\begin{description}
+    \item[Buy] $\text{MFI}$ < $\text{sig}_{\text{buy}}$
+    \item[Sell] $\text{MFI}$ > $\text{sig}_{\text{sell}}$
+\end{description}
+
+
+\subsection{Commodity Channel Index}
+
+Parameters\cite{stock-market-prediction-model-using-TPWS}:
+\begin{itemize}
+    \item $n_{\text{CCI}}$: days to calculate CCI, default 20
+    \item $n_{\text{trend}}$: days to compare CCI trend, default 5
+    \item $\text{sig}_{\text{sell}}$: signal to sell, default -100
+    \item $\text{sig}_{\text{buy}}$: signal to buy, default 100
+\end{itemize}
+
+Index calculation:
+\begin{itemize}
+    \item $t$: typical price, today's high + low + close
+    \item $p$: yesterday's typical price
+    \item $\text{SMA}$: mean of $n_{\text{CCI}}$ days of typical price
+    \item $\text{MD}$: mean absolute deviation of $n_{\text{CCI}}$ days of typical price
+    \item $\text{CCI}$: $(p - \text{SMA}) / (\text{MD} * 0.015)$
+\end{itemize}
+
+Decision trigger:
+\begin{description}
+    \item[Buy] latest CCI > $\text{sig}_{\text{buy}}$ and latest CCI > $\max\{\text{CCI}\}$ in $n_{\text{trend}}$ days
+    \item[Sell] latest CCI < $\text{sig}_{\text{sell}}$ and latest CCI > $\min\{\text{CCI}\}$ in $n_{\text{trend}}$ days
+\end{description}
+
+\subsection{Stochastic RSI}
+
+Parameters\cite{stock-market-prediction-model-using-TPWS}:
+\begin{itemize}
+    \item $n$: days to consider, default 14
+    \item $\text{sig}_{\text{buy}}$: signal to buy, default 0.2
+    \item $\text{sig}_{\text{sell}}$: signal to sell, default 0.8
+\end{itemize}
+
+Index calculation:
+\begin{itemize}
+    \item $\text{stochRSI}$: (today's RSI - $n$ day minimum RSI) /  ($n$ day maximum RSI - $n$ day minimum RSI)
+\end{itemize}
+
+Decision trigger:
+\begin{description}
+    \item[Buy] $\text{stochRSI}$ < $\text{sig}_{\text{buy}}$
+    \item[Buy] $\text{stochRSI}$ > $\text{sig}_{\text{sell}}$
+\end{description}
 
 %-------%
 
