@@ -29,3 +29,6 @@ data/*.csv
 __pycache__/
 
 .Lutil-checkpoint/
+
+*.xlsx
+*.twb*
